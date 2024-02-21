@@ -7,7 +7,7 @@ categories: ["markets", "spotgamma"]
 Spotgamma releases twitter "stream of thought" type of threads on a regular basis. Many of the notes are quite interesting and I plan on teasing out some of the more interesting bits here.
 
 ## 2024-01-21 - 2024-01-22
-- On Jan 13th, SG released a thread on how 0DTE trading is increasing. The week of the 13th saw `**the largest number of SPX call contracts ever bought**`. (The OCC doesnt explicitly label 0dte, but as 0dte are the lowest priced contracts reflecting average premium, but record contracts).
+- On Jan 13th, SG released a thread on how 0DTE trading is increasing. The week of the 13th saw **the largest number of SPX call contracts ever bought**. (The OCC doesnt explicitly label 0dte, but as 0dte are the lowest priced contracts reflecting average premium, but record contracts).
 [1. 0DTE is increasing](https://twitter.com/spotgamma/status/1746286693471203815).
 ![0DTE is increasing](./images/sg1_spx_0dte.jpg)
 
