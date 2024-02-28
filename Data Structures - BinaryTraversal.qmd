@@ -3,10 +3,6 @@ title: "Data Structures - Binary Traversal"
 format:
   gfm:
     code-fold: true
-    # preview-mode: raw
-    # html-math-method:
-    #    method: webtex
-    #    url: https://latex.codecogs.com/png.image?%5Cbg_black&space;
   html: default
   typst: default
 jupyter: qmd_Py3111_trial
@@ -32,7 +28,6 @@ Topics covered:
 
 ![Typical Tree](./Typical Tree.png)
 
-
 - **Node**: Each circled letter in the image above represents a node. A node is any data structure that stores data.
 - **Root Node**: First node from which all other nodes in the tree descend from. In other words, a root node is a node that doesnt have a parent node. In every tree, there is always one unique root node. The root node is node $A$ in the above image.
 - **Subtree**: Tree whose nodes descend from some other tree. For example, in the image above for example, nodes $F$, $K$, and $L$ form a subtree of the original tree.
@@ -56,18 +51,18 @@ graph TB
     %% C --> I((9))
     %% C --> G((8))
     %% G --> M((13))
-    A --> B
-    A --> C
-    B --> D
-    B --> E
-    B --> F
-    D --> J
-    F --> K
-    F --> L
-    C --> H
-    G --> M
-    C --> I
-    C --> G
+    A --- B
+    A --- C
+    B --- D
+    B --- E
+    B --- F
+    D --- J
+    F --- K
+    F --- L
+    C --- H
+    G --- M
+    C --- I
+    C --- G
 ```
 
 - **Parent**: A node that has a subtree is the parent node of that subtree. For example, node $B$ is the parent of nodes $D$, $E$, and $F$, and node $F$ is the parent of nodes $K$ and $L$.
@@ -79,16 +74,58 @@ graph TB
 In the preceding tree example, the depth of node $H$ is 2.
 
 ### Binary Trees
-
+A **Binary Tree** is a collection of nodes, where the nodes in the tree can hve zero, one, or two child nodes. A simple binary tree has a maximum of two children, the left and right child.
+The nodes in a binary tree are organized in a hierarchical manner, and are read from left to right.
+```{mermaid}
+graph TB
+    5 --- 3
+    5 --- 7
+    7 --- 6
+    7 --- 9
+```
+A tree is a **Full Binary** tree if all the nodes of the tree have either zero or two children and there is no node that has one child, example:
+```{mermaid}
+graph TB
+    1---2
+    1---3
+    2---4
+    2---5
+    5---6
+    5---7
+```
+A **Perfect** binary tree has all the nodes in the binary tree filled, and it doesnt have space vacant for any new nodes; if any new nodes are added, they can only be added by increasing the tree's height. The number of nodes in a perfect binary tree is $2^{h+1} - 1$, where $h$ is the height of the tree.
+```{mermaid}
+graph TB
+    1---2
+    1---3
+    2---4
+    2---5
+    3---6
+    3---7
+```
+A **Complete** binary tree is filled with all possible nodes except with a possible exception at the lowest level of the tree. All nodes are also filled on the left side. The number of nodes in a complete binary tree is $2^h$, where $h$ is the height of the tree.
+```{mermaid}
+graph TB
+    1---2
+    1---3
+    2---4
+    2---5
+    3---6
+    3---7
+    4---8
+    4---9
+```
+A *Balanced* tree.
 ```{mermaid}
 graph TB;
-    1 --> 2
-    1 --> 3
-    2 --> 4
-    2 --> 5
-    3 --> 6
-    3 --> 7
+    1 --- 2
+    1 --- 3
+    2 --- 4
+    2 --- 5
+    3 --- 6
+    3 --- 7
 ```
+
 ```{python}
 class Node:
     def __init__(self, data):
@@ -101,10 +138,12 @@ class Node:
 To better understand this class, this is the type of tree that will be worked with in the code below.
 ```{mermaid}
 graph TB
-  n1 --> n2
-  n1 --> n3
-  n2 --> n4
+  ((n1)) --- n2
+  ((n1)) --- n3
+  n1 --- n3
+  n2 --- n4
 ```
+
 ```{python}
 n1 = Node("root node")
 n2 = Node("left child node")
@@ -114,8 +153,15 @@ n4 = Node("left grandchild node")
 n1.left_child = n2
 n1.right_child = n3
 n2.left_hild = n4
-
-# Tree traversal
+```
+### Tree traversal
+The method to visit all the nodes in a tree is called **traversal**. There are three types of tree traversal:
+    - In-order traversal
+    - Pre-order traversal
+    - Post-order traversal
+In the case of a linear data structure, data element traversal is straightforward since all the items are stored in a sequential manner, so each data item is only visited once. Howver, in the case of non-linear data structures, such as trees and graphs, traversal algorithms are important. The traversal algorithms are used to visit all the nodes in the tree, and the order in which the nodes are visited is important.
+Beginning with the left substree of the binary tree above, we start from the root node, print out the node, and move down to the tree to the next left node. There are multiple ways to process and traverse the tree that depend upon the sequence of visiting the root node, left subtree, or right subtree. Mainly, there are two kinds of approaches, firstly, one in which we start from a node and traverse every available child node, and then continue to traverse to the next sibling. There are three possible variations of this method, namely, **in-order**, **pre-order**, and **post-order**. Another approach to traverse the tree is to start from the root node and then visit all the nodes on each level, and process the nodes level by level.
+```{python}
 current = n1
 while current:
     print(current.data)
@@ -146,3 +192,65 @@ def preorder(root_node):
 
 preorder(n1)
 ```
+
+### Post-order traversal
+```{python}
+def postorder(root_node):
+    current = root_node
+    if current is None:
+        return
+    postorder(current.left_child)
+    postorder(current.right_child)
+    print(current.data)
+
+postorder(n1)
+```
+
+### Level-order traversal
+```{python}
+from collections import deque
+
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.right_child = None
+        self.left_child = None
+
+
+n1 = Node("root node")
+n2 = Node("left child node")
+n3 = Node("right child node")
+n4 = Node("left grandchild node")
+
+n1.left_child = n2
+n1.right_child = n3
+n2.left_child = n4
+
+
+def lvl_order_traversal(root_node):
+    list_of_nodes = []
+    traversal_queue = deque([root_node])
+    while len(traversal_queue) > 0:
+        node = traversal_queue.popleft()
+        list_of_nodes.append(node.data)
+        if node.left_child:
+            traversal_queue.append(node.left_child)
+            if node.right_child:
+                traversal_queue.append(node.right_child)
+    return list_of_nodes
+
+
+print(lvl_order_traversal(n1))
+# ['root node', 'left child node', 'right child node', 'left grandchild node']
+```
+If the number of elements in `traversal_queue` is greater than 0, the body of the loop is executed. The node at the front of the queue is popped off and added to the `list_of_nodes` list. The first `if` statement will enqueue the left child node if the node provided with a left node exists. The second `if` statement does the same for the right child node. Further, the `list_of_nodes` list is returned in the last statement.
+
+## Important applications of binary trees:
+1. Binary trees as expression trees are used in compilers.
+2. It is also used in Huffman coding in data compression.
+3. Binary search trees are used for efficient searching, insertion, and deletion of a list of items.
+4. **Priority Queue (PQ)**, which is used for finding and deleting minimum or maximum items in a collection of elements in logarithmic time in the worst case.
+
+
+### Expression Trees
