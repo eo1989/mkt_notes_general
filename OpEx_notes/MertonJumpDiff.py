@@ -1,8 +1,9 @@
 import numpy as np  # noqa
+import math
 
 rng = np.random.default_rng()
-normal = rng.normal()
-poisson = rng.poisson()
+# normal = rng.normal()
+# poisson = rng.poisson()
 
 
 def _cdf(x):
@@ -63,15 +64,15 @@ def merton_call_simulation(S0, sig, tau, r, K, lam, muy, sigy):
     k = np.exp(muy + 0.5 * sigy**2) - 1
     price = 0.0
     for i in range(nsim):
-        jump_N = np.random.poisson(lam * tau)
-        # jump_N = poisson(lam*tau)
-        jump_norm = np.random.normal(muy, sigy, jump_N)
-        # jump_norm = normal(muy, sigy, jump_N)
+        # jump_N = np.random.poisson(lam * tau)
+        jump_N = rng.poisson(lam*tau)
+        # jump_norm = np.random.normal(muy, sigy, jump_N)
+        jump_norm = rng.normal(muy, sigy, jump_N)
         jump_sum = np.sum(jump_norm)
         # S_tau = S0 * np.exp((r - lam*k - 0.5*sig**2)*tau + sig * normal(0, np.sqrt(tau)) + jump_sum)
         S_tau = S0 * np.exp(
             (r - lam * k - 0.5 * sig**2) * tau
-            + sig * np.random.normal(0, np.sqrt(tau))
+            + sig * rng.normal(0, np.sqrt(tau))
             + jump_sum
         )
         price += max(S_tau - K, 0)
