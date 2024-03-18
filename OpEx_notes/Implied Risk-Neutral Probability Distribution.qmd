@@ -1,0 +1,150 @@
+---
+title: "Deriving Implied Risk-Neutral Distributions from Option Prices"
+format: html
+execute:
+  cache: true
+  eval: true
+jupyter: python3
+---
+# Preamble
+
+The BSM model and its extensions assume that the probability distribution of the underlying asset at any given future time is *lognormal*. This assumption isnt made by traders, however.
+- Traders assume that the probability distribution of an equity price has a heavier *left tail* and a lighter *right tail* than the lognormal distribution.
+
+[Implied Distribution and lognormal distribution for equities]("../impled_vs_lognorm_distributions_equities.webp")
+
+- Traders also assume that the probability distribution of an exchange rate has a heavier *right tail* and a heavier *left tail* (aka **fat tails**) than the lognormal distribution.
+[Implied and lognormal distribution for currency options]("../implied_vs_lognorm_foreign_currency_options.webp")
+
+- Traders use `volatility smiles` to allow for non-lognormality. The smile defines the relationship between the implied volatility (henceforth: IV) of an option and its strike price.
+- For equities, however, the volatility smile tends to be downward sloping. This means that out-of-the-money (OTM) puts and in-the-money (ITM) calls have higher IVs whereas OTM calls and ITM puts tend to have lower IVs.
+[Volatility Smile for equities]("../Vol_Smile.webp")
+
+- For currencies, the smile is parabolic, or U-shaped. This means that both OTM options and ITM options tend to have high IVs whereas ATM options tend to have lower IVs.
+    - If the exchange rate increases, the smile tends to move right; if the exchange rate decreases, the smile tends to move left. Similarly, when the equity price increases, the volatility skew tends to move to the right, and when the equity price decreases, the skew tends to move to the left.
+
+- For this reason The Smile tends is often calculated as the relationship between the IV and $K/S_{0}$ rather than the relationship between IV and $K$. The smile is then much more stable.
+- Often traders also use the `volatility term structure`. The IV of an option depends on the length of that option contract, or its expiry.
+[Volatility Term Structure]("../Vol_term_struct.webp")
+- When Smiles and term structures are combined together, they produce a `volatility surface`. This defines IV as a function of both strike price $K$ and time to expiry $T$.
+[Volatility Surface Table]("../Vol_Surf.webp")
+
+## Lognormal Distributions
+The lognormal distribution is a good approximation for many financial variables, such as the rate of return on a stock, $r = \frac{(P1 - P0)}{P0}$, where $P0$ and $P1$ are the stock prices at time $0$ and $1$.
+
+Strictly speaking, this is inconsistent with reality because a "normal" variable has infinite tails on both sides. In theory, $r$ could end up below $-1$, which implies $P1 \le 0$.
+
+In reality, due to the limited liability of corporations, stock prices cant turn negative. In most situations, this is an excellent approximation.
+
+A random variable $X$ is said to have a lognormal distribution if its log $Y = \ln(X)$ is normally distributed. Define here $X = \frac{P1}{P0}$. Because the argument $X$ in the log function must be positive, the price $P1$ can never go below zero.
+
+The lognormal distriubtion function has the following expression:
+$$
+f(x) = \frac{1}{x\sqrt{2\pi\sigma^{2}}}e^{{-\frac{(\ln(x) - \mu)^{2}}{2\sigma^{2}}\brack}}, \quad x \gt 0
+$$
+
+Note that this is more complex than simply plugging $ln(x)$ in the normal density function
+$$
+f(x) = \frac{1}{\sqrt{2\pi\sigma^{2}}}\exp\left(-\frac{1}{2\sigma^{2}}(x - \mu^{2})\right)
+$$
+because $x$ also appears in the denominator. Its meann is:
+$$
+E(X) = e^{[{\mu + \frac{1}{2}\sigma^{2}}]}
+$$
+and variance
+$$
+V[X] = e^{[{2\mu + \sigma^{2}}]}-e^{[{2\mu + \sigma^{2}}]}
+$$
+
+The parameters were chosen to correspond to those of the normal variable
+$$
+E[Y] = E[\ln(X)] = \mu
+V[Y] = V[\ln(X)] = \sigma^{2}
+$$
+
+Conversely, if we set:
+> $ E[X] = e^{[r]} $
+
+then the mean of the associated normal variable is
+$$
+E[Y] = E[\ln(X)] = (r - \frac{\sigma^{2}}{2})
+$$
+
+This adjustment is also used in the BSM model, where the formula invloves a trend in:
+$$
+(r - \frac{\sigma^{2}}{2})
+$$
+for the log-price ratio. The figure below depicts the lognormal density function w/ $\mu = 0$ and $\sigma = 1.0, 1.2, 0.6$.
+[Lognormal Density Function]("../log_norm_density_func.webp")
+
+Note that the distribution is skewed to the *right*. The tail increases for greater values of $\sigma$. This explains why as the variance increases, the mean is pulled up in the following equation.
+$$
+E(X) = e^{[{\mu + \frac{1}{2}\sigma^{2}}]}
+$$
+
+## Deriving Implied Risk-Neutral Distributions from Volatility Smiles
+The price of a European call option on an asset with Strike Price $K$ at maturity $T$ is given by:
+$$
+c = e^{-rt}{\int_{S_{T}=K}^{\infty} (S_{T} - K)g(S_{T})dS_{T}}
+$$
+
+Where $r$ is the interest rate (assume constant) $S_T$ is the asset price at time $T$, and $g$ is the risk-neutral probability density function of $S_T$.
+
+Differentiating once with respect to $K$ yields:
+$$
+\frac{\partial c}{\partial K} = -e^{-rT}\int_{S_{T}=K}^{\infty}g(S_{T})dS_{T}
+$$
+
+Differentiating again with respect to $K$ gives:
+$$
+\frac{\partial^{2}c}{\partial K^{2}}=e^{-rT}g(K)
+$$
+
+This shows that the probability density function $g$ is given by:
+$g(K) = e^{rT}\frac{\partial^{2}c}{\partial K^{2}}$
+
+### BREAK
+This result, which is from Breeden & Litzenberger (1978), allows risk-neutral probability distributions to be estimated from volatility smiles. Suppose that $c1, c2$, and $c3$ are the prices of $T$-year European call options with strike prices of $K - \delta$, $K$, and $K + \delta$, respectively. Assuming $\delta$ is small, an estimate of $g(K)$ is:
+
+$e^{rT}\frac{c_{1} + c_{3} - 2c_{2}}{\delta^{2}}$
+
+For another way of understanding this, suppose you setup a "Butterfly spread" with the strike prices $K - \delta$, $K$, and $K + \delta$, and maturity $T$. This means you will buy a call with strike price $K - \delta$, buy a call with strike $K + \delta$, and sell two calls with strike $K$.
+The value of your position is $c_{1} + c_{3} - 2c_{2}$. The value of this position can also be calculated by integrating the payoff over the risk-neutral probability distribution, $g(ST)$, and discounting the risk-free rate. The payoff is shown below:
+[ButterFly Spread]("../BFly_PayOff.webp")
+
+Since $\delta$ is small, we can assume that $g(ST) = g(K)$ in the interval $K - \delta \lt ST \lt K + \delta$, where the payoff is non-zero. The area under the "spike" in the figure above is $0.5 \times 2\delta \times \delta = \delta^{2}$. The value of the payoff (when $\delta$ is small) is therefore:
+$e^{-rT}g(K)\delta^{2}$
+
+It follows that:
+$e^{-rT}g(K)\delta^{2} = c_{1} + c_{3} - 2c_{2}$
+
+which directly leads to:
+$g(K) = e^{rT}\frac{c_{1} + c_{3} - 2c_{2}}{\delta^{2}}$
+
+## Numerical example
+Example: Suppoe that the price of non-divvie paying stock is $10 the risk-free rate is 5% and the IV of the 3-month european options with strike prices of $6-14 are 30-22%\, respectively. The IVs are given in the table below
+```{python}
+import numpy as np
+import pandas as pd
+from scipy.stats import norm
+import scipy.stats as si
+from numpy.random import randn
+from numpy import random as rn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+def PolantzerNormDist(x):
+    PolantzerNormDist = si.norm.cdf(x, 0.0, 1.0)
+    return PolantzerNormDist
+
+
+def PolantzerBSCall(S, K, T, r, sigma):
+    d1 = (np.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    d2 = (np.log(S / K) + (r - 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    PolantzerBSCall = (S * PolantzerNormDist(d1) - K * np.exp(-r*T)*PolantzerNormDist(d2))
+    return (PolantzerBSCall)
+
+df = pd.
+
+```
