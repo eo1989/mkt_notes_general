@@ -142,3 +142,40 @@ ax.set(xlabel="Exponential Distribution", ylabel="Frequency")
 ax
 
 ```
+
+## Binomial Distributions
+The binomial distribution is a discrete probability distribution, in which only two outcomes are possible, such as success or failure, gain or loss, and the probability of success and failure is the same for **all trials**. However, the coutcomes dont have to be equally likely, and each trial is independent of the others. Its probability distribution function is given by:
+$$
+f(k, n, p) = Pr(k; n, p) = Pr(X = k) = \binom{n}{k}p^{k}(1-p)^{n-k}
+$$
+Where:
+$ \binom{n}{k} = \frac{n!}{k!(n-k)!}$
+Here, $n = \text{number of trials }, p = \text{probability of success in each trial}, k = \text{number of successes}$.
+
+```{python}
+from scipy.stats import binom
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = binom.rvs(n = 20, p = 0.7, size = 10_000)
+
+ax = sns.displot(data, bins = 100, kde = False, color = 'skyblue')
+ax.set(xlabel="Binomial Distribution", ylabel="Frequency")
+ax
+```
+
+## Poisson Distribution
+Poisson distributions represent how many times an event can occur over a specific time period.
+For example, the number of users who visited a website in an interval can be thought of as a Poisson process. The probability mass function is given by:
+$P(k \text{ events in interval}) = e^{-\lambda}\frac{\lambda^{k}}{k!}$
+
+```{python}
+from scipy.stats import poisson
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = poisson.rvs(mu = 20, size = 10_000, random_state = 93)
+ax = sns.displot(data, bins = 100, kde = False, color = 'skyblue')
+ax.set(xlabel="Poisson Distribution", ylabel="Frequency")
+ax
+```
