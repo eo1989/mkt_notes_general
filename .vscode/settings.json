@@ -2,6 +2,5 @@
 	"github.copilot.enable": {
 		"*": "true"
 	},
-	"python.analysis.typeCheckingMode": "basic",
 	"julia.environmentPath": "c:\\Users\\eorlo\\.julia\\environments\\v1.10"
 }
