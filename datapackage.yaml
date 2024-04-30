@@ -1,0 +1,21 @@
+name: vix
+title: CBOE Volatility Index
+resources:
+	- name: vix-daily
+		path: data/vix-daily.csv
+		format: csv
+		mediatype: text/csv
+		schema:
+			fields:
+				- name: DATE,OPEN,HIGH,LOW,CLOSE
+					type: string
+				- name: OPEN
+					type: string
+					type: number
+				- name: HIGH
+					type: number
+				- name: LOW
+					type: number
+				- name: CLOSE
+					type: number
+				- name: number

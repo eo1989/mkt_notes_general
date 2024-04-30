@@ -26,6 +26,6 @@ Spotgamma releases twitter "stream of thought" type of threads on a regular basi
 [eu close](https://twitter.com/spotgamma/status/1745575560112226691)
 ![](./images/sg4_spx_AllStrikesFrom_Jan112024.jpg)
 
-----------
+---
 **NOTE**: _HIRO_: Measures the "punch" (define?) of options flows, and large 0dte flows often correlate with SPX movement.
-----------
+---
