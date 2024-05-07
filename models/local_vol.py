@@ -281,3 +281,10 @@ class LocalVol:
         sqrt_dt = np.sqrt(dt)
         S *= np.exp(-0.5 * lv * dt + np.sqrt(lv) * rnd[:, 0] * sqrt_dt)
         return x_
+
+    """
+    NOTES:
+    https://github.com/RIVACON/RiVaPy/blob/4b5b29d164e179e7bc483557f1fd807f1ed51999/rivapy/models/local_vol.py
+    https://github.com/aaronsmith1234/volatilipy/blob/main/volatilipy/helper_functions.py
+    https://github.com/frontmark/jupyter-notebooks/blob/master/overview.ipynb
+    """
