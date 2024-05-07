@@ -1,3 +1,4 @@
+from typing import Any
 from bs4 import BeautifulSoup
 import pandas as pd
 import requests
@@ -8,14 +9,14 @@ except Exception:
     pass
 
 
-def force_float(elt):
+def force_float(elt) -> float | Any:
     try:
         return float(elt)
     except:
         return elt
 
 
-def get_calls(ticker, date=None):
+def get_calls(ticker, date=None) -> Any:
     """
     Extracts call option table for input ticker and expiration date.
     :param ticker:
@@ -26,7 +27,7 @@ def get_calls(ticker, date=None):
     return options_chain["calls"]
 
 
-def get_puts(ticker, date=None):
+def get_puts(ticker, date=None) -> Any:
     """
     Extracts put option table for input ticker and expiration date.
     :param ticker:
@@ -37,7 +38,7 @@ def get_puts(ticker, date=None):
     return options_chain["puts"]
 
 
-def get_expiration_dates(ticker):
+def get_expiration_dates(ticker) -> list[str] | list:
     """
     Scrapes the expiration dates from each option chain for input ticker.
     :param ticker: str - Ticker symbol of the stock/option.
@@ -63,7 +64,7 @@ def get_expiration_dates(ticker):
         session.close()
 
 
-def build_options_url(ticker, date=None):
+def build_options_url(ticker, date=None) -> Any:
     """
     Constructions the URL pointing to options chain.
     """
@@ -75,7 +76,7 @@ def build_options_url(ticker, date=None):
     return url
 
 
-def get_options_chain(ticker, date=None, raw=True, headers=None):
+def get_options_chain(ticker, date=None, raw=True, headers=None) -> Any:
     """
     Fetch options data for the given ticker and expiration date.
     :param ticker str - Stock ticker symbol
