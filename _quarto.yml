@@ -1,0 +1,7 @@
+project:
+  title: "mkt_notes_general"
+
+format:
+  gfm:
+    html-math-method: katex
+    code-fold: true

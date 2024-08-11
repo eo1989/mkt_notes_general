@@ -1,0 +1,31 @@
+---
+title: "SpotGamma Notes"
+summary: "In this folder I will present many of SpotGamma's twitter posts and some personal notes on them."
+date: 2024-01-21
+categories: ["markets", "spotgamma"]
+---
+Spotgamma releases twitter "stream of thought" type of threads on a regular basis. Many of the notes are quite interesting and I plan on teasing out some of the more interesting bits here.
+
+## 2024-01-21 - 2024-01-22
+- On Jan 13th, SG released a thread on how 0DTE trading is increasing. The week of the 13th saw **the largest number of SPX call contracts ever bought**. (The OCC doesnt explicitly label 0dte, but as 0dte are the lowest priced contracts reflecting average premium, but record contracts).
+[1. 0DTE is increasing](https://twitter.com/spotgamma/status/1746286693471203815).
+![0DTE is increasing](./images/sg1_spx_0dte.jpg)
+
+
+- When looking at SPX contract volume as a percentage of total, the 0dte contracts represented 56% of SPX volume on 12/22, and everyday of the week in discussion being >= 49.7%.
+[2](https://twitter.com/spotgamma/status/1746286688773493054)
+![Vol/OI](./images/sg2_spx_0dte_VOLMoverOI.jpg)
+
+- Monday the 8th had both their largest "SP500 0DTE HERO Signal" (teal) and largest "all expiry" HIRO (purple).
+[3](https://twitter.com/spotgamma/status/1746286691281748263)
+![Monday Jan 8th HIRO signal](./images/sg3_spx_0dte_%25ageOfWhole.jpg)
+
+- Large 0DTE impact could be seen on Thursday the 11th, right after CPI was released. Assumed to believe the flow brough some mean reversion to the market after some weakness.
+
+- On the 11th, volatility was subdued (mean reversion) right around the 12/noon (et) EU close. Starting off the SPX rejected off the 4800 call wall with heavy negative delats (purple & teal lines). Put buyers stopped (pink box) as the SPX hit "support" around ~4750. Here the downside move stalled out. Then with EU close SG's HIRO had a large positive surge (they purport it means puts were sold &|| calls were bought), which technically could be inferred with the HIRO lines moving materially higher (purple arrow).
+[eu close](https://twitter.com/spotgamma/status/1745575560112226691)
+![](./images/sg4_spx_AllStrikesFrom_Jan112024.jpg)
+
+---
+**NOTE**: _HIRO_: Measures the "punch" (define?) of options flows, and large 0dte flows often correlate with SPX movement.
+---

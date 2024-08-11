@@ -1,0 +1,205 @@
+---
+title: "Complete Vizualization of Probability Distributions"
+format: html
+execute:
+  eval: true
+  echo: true
+  fenced: true
+jupyter: win_pyenv3.11.1
+---
+Table of Contents
+----------
+
+- [Random Variables](#Random-Variables)
+    - [Types of Random Variables](#Types-of-random-variables)
+- [What is a probability distribution?](#what-is-a-probability-distribution)
+    1. [Discrete Random Variable](#Discrete-Random-Variable)
+    2. [Continuous Random Variable](#Continuous-Random-Variable)
+
+- [Elements of the probability distribution](#Elements-of-the-probability-distribution)
+    1. [PMF (Probability Mass Function)](#Probability-Mass-Function)
+    2. [PDF (Probability Density Function)](#Probability-Density-Function)
+    3. [KDE (Kernel Density Estimation)](#Kernel-Density-Estimation)
+    4. [CDF (Cumulative Distribution Function)](#Cumulative-Distribution-Function)
+    5.
+- [Popular Probability Distributions](#Probability-Distributions)
+    - [Uniform Distribution](#Uniform-Distributions)
+    - [Normal Distribution](#Normal-Distributions)
+    - [Exponential Distribution](#Exponential-Distributions)
+    - [Binomial Distribution](#Binomial-Distributions)
+    - [Poisson Distribution](#Poisson-Distributions)
+        - [Bernoulli Distribution](#Bernoulli-Distributions)
+        - [Continuous Distributions](#Continuous-Distributions)
+
+# Types of Random Variables
+A `random variable` is a variable whose values are determined by chance. A random variable can take on a set of possible different values, each with an associated probability.
+
+## Types of Random Variables
+### Discrete Random Variable
+**Discrete Random Variable**: Its a variable that takes on distinct and countable values.
+   - Example: The number of students in a class, the number of cars in a parking lot, the number of heads when flipping a coin, etc.
+
+### Continuous Random Variable
+**Continuous Random Variable**: Its a variable that can take on any value within a given range.
+   - Example: The height of a person, the weight of a person, the time it takes to complete a task, etc.
+
+# What is a probability distribution?
+For a given data generation process, a probability distribution depicts the expected outcomes of possible values. Mathematically, probability distributions represent the values of a variable which holds the probabilities of an experiment, event, or process. In Machine Learning, we must deal with a large amount of data, and the process of finding patterns in said data requires a large number of studies based on probability distributions.
+
+# Elements of the probability distribution
+<center>
+```{mermaid}
+graph TD
+    A[Probability Distribution Function] --> B[PMF]
+    A[Probability Distribution Function] --> C[PDF]
+    A[Probability Distribution Function] --> D[CDF]
+```
+</center>
+For now only PMFs and PDFs will be discussed.
+
+## Probability Mass Function
+<center>![](./PMF_fig1.png)</center>
+In statistics, a probability mass function is a function that gives the probability that a *discrete* random variable is exactly equal to some value. The probability mass function is often the primary means of defining a discrete probability distribution, and such functions exist for either scalar or multivariate random variables whose __domain__ is discrete.
+Mathematically, the PMF is defined as:
+
+> Let X be a discrete random variable with range
+
+$$
+R_{X} = {x_{1},x_{2},x_{3},\dots} \text{finite or countably infinite}.
+$$
+
+The function:
+$$
+P_{X}(x_{k}) = P(X = x_{k}), \space \text{k = 1, 2, 3, ...,}
+$$
+
+is called the *probability mass function (PMF)* of $X$.
+
+## Probability Density Function
+<center>![](./PDF_fig2.png)</center>
+The Probability density function represents the density of a `continuous random variable` lying between a specific range. We can also call it a "Continuous Probabiliy Distribution". The PDF is often visualized using a histogram where the data are divided into bins and the height of each bin represents the frequency of the data points within that bin.
+Mathematically,
+
+$\overbrace{F(x) = P(a \leq x \le b) = \int_{a}^{b}f(x)dx \geq 0}^{\text{Probability Density Function}}$
+
+## Kernel Density Estimation
+Kernel Density Estimation (KDE) is a non-parametric way to estimate the PDF of a random variable. It provides a smoother representation of the distribution, helping
+
+## Probability Distributions
+<center>
+```{mermaid}
+graph TD
+    A[Probability Distribution] --> B[Discrete Probability Distribution]
+    A[Probability Distribution] --> C[Continuous Probability Distribution]
+    B[Discrete Probability Distribution] --> D[Binomial]
+    B[Discrete Probability Distribution] --> E[Poisson]
+    C[Continuous Probability Distribution] --> F[Uniform]
+    C[Continuous Probability Distribution] --> G[Normal]
+    C[Continuous Probability Distribution] --> H[Exponential]
+```
+</center>
+
+The most common probability distributions are:
+- Uniform Distribution
+- Normal Distribution
+- Exponential Distribution
+- Binomial Distribution
+- Poisson Distribution
+
+### Uniform Distributions
+This particular distribution falls under the category of the continuous probability distribution. The uniform distribution specifies an equal probability across a given range of continuous values. In other words, it is a probability distribution with a constant probability.
+$f(x) = \begin{cases} \frac{1}{b-a} &\text{for } a \leq x \leq b \\ 0 &\text{for } x \leq a \text{or } x \ge b \end{cases}$
+This is the probability density function for a continuous uniform distribution on the interval $[a, b]$.
+
+In python the scipy.stats module has a uniform class where the first argument is the lower bound and the second argument is the distribution's range.
+
+```{python}
+from scipy.stats import uniform
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Generate random numbers from a uniform distribution
+data = uniform.rvs(size=10_000, loc=5, scale=10)
+
+# plotting the uniform data
+ax = sns.displot(data, bins=100, color="k")
+ax.set(xlabel="Uniform Distribution", ylabel="Frequency")
+ax
+# plt.show()
+```
+
+## Normal Distribution
+The normal distribution on represents a probability distribution for a real-valued random variable. It is also known as a *Gaussian distribution* or as a "bell curve".
+$$
+f(x; \mu, \sigma) = \frac{1}{\sqrt{2\pi\sigma^{2}}}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^{2}}
+$$
+
+where: $\mu = \text{mean}$, $\sigma = \text{standard deviation}$, and $x = \text{random variable}$.
+
+
+```{python}
+from scipy.stats import norm
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = norm.rvs(size = 10_000, loc = 0, scale = 1)
+ax = sns.distplot(data, bins = 100, kde = True, color = 'skyblue', hist_kws={"linewidth": 14, 'alpha': 1})
+ax
+```
+The figure shows the distribution fits a bell-shaped density curve quite well, that is described by its mean and standard deviation. The density curve is symmetrical, centered on its mean, and its spread is determined by its standard deviation. This indicates that data close to the mean occurs more frequently than data far from the mean.
+
+## Exponential Distributions
+The exponential distribution describes how long it takes for a continuous process to change state. The exponential distribution is the probability distribution of the time between events in a Poisson point process in probability and statistics.
+$f(x; \lambda) = \begin{cases} \lambda e^{-\lambda x} &\text{for } x \ge 0, \\ 0 &\text{for } x \le 0.\end{cases}$
+Here $\lambda \ge 0$ is the parameter of the distribution, often called the *rate parameter*.
+The exponential distribution can be thought of as the geometric distribution's continuous counterpart.
+
+```{python}
+from scipy.stats import expon
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# data = norm.rvs(size = 10_000, loc = 0, scale = 1)
+data = expon.rvs(loc=0, scale=10, size=10_000)
+ax = sns.displot(data, bins=100, kde=True, color="skyblue")
+ax.set(xlabel="Exponential Distribution", ylabel="Frequency")
+ax
+
+```
+
+## Binomial Distributions
+The binomial distribution is a discrete probability distribution, in which only two outcomes are possible, such as success or failure, gain or loss, and the probability of success and failure is the same for **all trials**. However, the coutcomes dont have to be equally likely, and each trial is independent of the others. Its probability distribution function is given by:
+$$
+f(k, n, p) = Pr(k; n, p) = Pr(X = k) = \binom{n}{k}p^{k}(1-p)^{n-k}
+$$
+Where:
+$ \binom{n}{k} = \frac{n!}{k!(n-k)!}$
+Here, $n = \text{number of trials }, p = \text{probability of success in each trial}, k = \text{number of successes}$.
+
+```{python}
+from scipy.stats import binom
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = binom.rvs(n = 20, p = 0.7, size = 10_000)
+
+ax = sns.displot(data, bins = 100, kde = False, color = 'skyblue')
+ax.set(xlabel="Binomial Distribution", ylabel="Frequency")
+ax
+```
+
+## Poisson Distribution
+Poisson distributions represent how many times an event can occur over a specific time period.
+For example, the number of users who visited a website in an interval can be thought of as a Poisson process. The probability mass function is given by:
+$P(k \text{ events in interval}) = e^{-\lambda}\frac{\lambda^{k}}{k!}$
+
+```{python}
+from scipy.stats import poisson
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = poisson.rvs(mu=3, size=10_000, random_state=93)
+ax = sns.displot(data, bins=100, kde=False, color="skyblue")
+ax.set(xlabel="Poisson Distribution", ylabel="Frequency")
+ax
+```

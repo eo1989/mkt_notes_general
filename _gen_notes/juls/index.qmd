@@ -1,0 +1,19 @@
+
+```{julia}
+#| include: false
+println(pwd())
+```
+```{julia}
+using Pkg
+Pkg.activate(pwd())|
+
+```
+Heres an example of a static image generated using `CairoMakie`:
+
+
+```{julia}
+#| code-fold: true
+
+using CairoMakie, Random
+
+```
