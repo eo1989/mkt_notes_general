@@ -312,3 +312,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,vim,visualstudiocode,julia,jupyternotebooks,python
+
+/.quarto/

@@ -1,28 +1,46 @@
 ---
 title: "Data Structures - Binary Traversal"
 format:
-  gfm:
+  html:
     code-fold: true
-  html: default
-  typst: default
-jupyter: qmd_Py3111_trial
+    mermaid-format: png
+    mermaid:
+      theme: forest
+#   html: default
+#   typst: default
+# jupyter: qmd_Py3111_trial
+# jupyter: WinPy3.12sys
+# jupyter: python3
+jupyter:
+  kernelspec:
+    display_name: Python 3.12.0
+    language: python
+    name: python3
 execute:
   cache: true
   warning: false
+  fenced: true
 code-link: true
 code-block-border-left: true
+fig-align: center
 ---
-# Most notes will be from [1. Hands-On Data Structures & Algorithms with Python - Store, Manipulate, & Access Data Effectively(2022, 3E, Packt)](https://www.packtpub.com/en-us/product/hands-on-data-structures-and-algorithms-with-python-9781801073448?type=print&gad_source=1), [2. Data Structures & Algorithms in Python - Developers Library(2022, 1E, Addison-Wesley)](https://a.co/d/4xThIzs), and finally, [3. A Common-Sense Guide to Data Structures & Algorithms(2020, 2E, Pragmatic)](https://a.co/d/bbxU7kM)
+# __Data Structures__
+
+## Most notes will be from
+- [1. Hands-On Data Structures & Algorithms with Python - Store, Manipulate, & Access Data Effectively(2022, 3E, Packt)](https://www.packtpub.com/en-us/product/hands-on-data-structures-and-algorithms-with-python-9781801073448?type=print&gad_source=1)
+- [2. Data Structures & Algorithms in Python - Developers Library(2022, 1E, Addison-Wesley)](https://a.co/d/4xThIzs)
+- [3. A Common-Sense Guide to Data Structures & Algorithms(2020, 2E, Pragmatic)](https://a.co/d/bbxU7kM)
+
 ## Chapter 6 of 1 - Trees
 A `Tree` is a hierachical form of data structure. Data structures such as lists, queues, and stacks are linear in that the items are stored in a sequential way. However, a tree is a non-linear data structure, as there is a **parent-child relationship** between the items. The top of the tree's data structure is known as a `root node`. This is the ancestor of all other nodes in the tree.
 
 Tree data structures are very important, owing to their use in various applications, such as parsing expressions, efficient searches, and priority queues. Certain document types, such as XML and HTML, can also be represented in a tree.
 
 Topics covered:
-    - Terms & definitions of trees
-    - Binary trees and binary search trees
-    - Tree traversal
-    - Binary search trees
+- Terms & definitions of trees
+- Binary trees and binary search trees
+- Tree traversal
+- Binary search trees
 
 ### Terminology
 
@@ -35,7 +53,7 @@ Topics covered:
 - **Leaf Node**: Leaf nodes dont have any children and are the terminal node of a given tree. The degree of a leaf node is *always* 0. In the preceeding diagram, the nodes $J$, $E$, $K$, $L$, $H$, $M$, and $I$ are all leaf nodes.
 - **Edge**: The connection between any given two nodes in a tree is called an *edge*. The total number of edges in a given tree will be a maximum of one less than the total nodes in the tree.
 
-  >> $1 - N_{tot}$
+  <!-- >> $1 - N_{tot}$ -->
 
 ```{mermaid}
 graph TB
@@ -95,6 +113,7 @@ graph TB
 ```
 A **Perfect** binary tree has all the nodes in the binary tree filled, and it doesnt have space vacant for any new nodes; if any new nodes are added, they can only be added by increasing the tree's height. The number of nodes in a perfect binary tree is $2^{h+1} - 1$, where $h$ is the height of the tree.
 ```{mermaid}
+%%| fig-width: 6.5
 graph TB
     1---2
     1---3
@@ -137,12 +156,14 @@ class Node:
 ```
 To better understand this class, this is the type of tree that will be worked with in the code below.
 ```{mermaid}
+%%| fig-width: 6.5
 graph TB
-  ((n1)) --- n2
-  ((n1)) --- n3
+  (n1) --- n2
+  (n1) --- n3
   n1 --- n3
   n2 --- n4
 ```
+{{< video https://youtu.be/wo9vZccmqwc >}}
 
 ```{python}
 n1 = Node("root node")
