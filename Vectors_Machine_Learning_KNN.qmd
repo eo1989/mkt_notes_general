@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Vectors in ML | KNN"
 format:
   html:
     code-fold: true
@@ -24,11 +24,8 @@ code-link: true
 code-block-border-left: true
 fig-align: center
 ---
-# Vectors in ML
-## KNN From Scratch w/ Vectors
-### Vectors
-i. Vectors are defined as: "A quantity having direction as well as magnitude, especially as determining the position of one point in space relative to another."
-> ex: A two dimensional vector is given below:
+Vectors are defined as: "A quantity having direction as well as magnitude, especially as determining the position of one point in space relative to another."
+  * ex: A two dimensional vector is given below:
 
 $$
 \text{2d vector} = \begin{bmatrix} x \\ y \end{bmatrix}
@@ -77,8 +74,10 @@ for vec in [v1, v2]:
     plot_vec2d(vec, ax = ax)
 # plot_vec2d([v1, v2])
 ```
-### a. Elementary Operations
-#### i. Addition
+# Elementary Operations
+---
+---
+## Addition
 Two vectors result in a third vector. Taking the vectors we have been working with, $\vec{v}_{1}$ and $\vec{v}_{2}$, we can add them together to get a third vector, $\vec{v}_{3}$:
 
 <!-- \vec{v}_{1} + \vec{v}_{2} = \begin{bmatrix} 1 \\ 2 \end{bmatrix} + \begin{bmatrix} 3 \\ 1 \end{bmatrix} = \begin{bmatrix} \text{1 + 3 =} 4 \\ \text{2 + 1 =} 3 \end{bmatrix} -->
@@ -90,7 +89,7 @@ Notice due to ***commutivity*** the order of the vectors does not matter. The re
 v3 = v1 + v2
 print(v3)
 ```
-#### ii. Subtraction
+## Subtraction
 Subtraction is similar to addition, but instead of adding the vectors, we subtract them. Subtracting $\vec{v}_{2}$ from $\vec{v}_{1}$, we get a third vector, $\vec{v}_{4a}$:
 
 $\begin{align}\vec{v}_{1} = {1 \brack 2} \text{, } \vec{v}_{2} = {3 \brack 1} \text{, } \vec{v}_{4a} = \vec{v}_{1} - \vec{v}_{2} = {1 - 3 =  -2\brack 2 - 1 = 1} \end{align}$
@@ -108,7 +107,7 @@ $\begin{align}\vec{v}_{1} = {1 \brack 2} \text{, } \vec{v}_{2} = {3 \brack 1} \t
 v4b = v2 - v1
 print(v4b)
 ```
-#### iii. Scalar Multiplication
+## Scalar Multiplication
 Scalar multiplication is multiplying a vector by a scalar. Multiplying $\vec{v}_{1}$ by 2, we get a third vector, $\vec{v}_{5}$:
 
 $\begin{align}2\vec{v}_{1} = 2{1 \brack 2} = {1 \times 2 = 2\brack 2 \times 2 = 4} \end{align}$
@@ -120,7 +119,7 @@ Multiplying by a negative scalar has a similar interpretation, but the vector is
 
 $\begin{align}-1.5\vec{v}_{2} = -1.5{3 \brack 1} = {3 \times -1.5 = -4.5\brack 1 \times -1.5 = -1.5} \end{align}$
 
-#### iv. Length of a Vector
+## Length of a Vector
 The length of a vector is also known as the magnitude or `Euclidean norm` depending on the context. In order to calculate the length of a 2d vector the following formula is used:
 $\begin{align} \text{length } \vec{v} = \sqrt{x^{2} + y^{2}} \end{align}$
 The general formula for the length of an n-dimensional vector is given below. Note that $i$ below denotes the *index* of the $i^{th}$ element, therefore the first element would be $x$, the second
@@ -140,7 +139,7 @@ print(f"Length of v1: {lv1:2g}\nLength of v2: {lv2:2g}")
 ```
 Taking the length of $\vec{v}_{1}$ and showing the geometric interpretation below, you can observe that the length of the vector is $\sqrt{5}$, which agrees with the output of the python function shown above. Notice the length as being the hypotenuse of a right angled triangle.
 
-#### v. Distance between vectors
+## Distance between vectors
 $\begin{align}\text{distance (d) } = \sqrt{(x_{2} - x{1})^{2} + (y_{2} - y_{1})^{2}}\end{align}$
 This can be generalized for an n-dimensional vector (utilizing vector subtraction):
 $\begin{align}{d(\vec{v},\vec{u})}  = ||\vec{v} -\vec{u}|| \end{align}$
@@ -154,7 +153,7 @@ vec_len(v1 - v2) == vec_len(v2 - v1) == np.sqrt(5)
 <!-- The dot product of two vectors is the sum of the products of the corresponding elements of the two vectors. The dot product of two vectors $\vec{v}_{1}$ and $\vec{v}_{2}$ is given by:
 $\begin{align}\vec{v}_{1} \cdot \vec{v}_{2} = \sum_{i=1}^{n} \vec{v}_{1i} \times \vec{v}_{2i}\end{align}$ -->
 
-### K-Nearest Neighbors (KNN)
+## K-Nearest Neighbors (KNN)
 K-Nearest Neighbors is a simple algorithm that stores all available cases and classifies new cases based on a similarity measure. It is mostly used for classification problems in Machine Learning. The algorithm works as follows:
 1. Calculate the distance between the new data point and all the data points in the dataset.
 2. Sort the data points based on the distance.
