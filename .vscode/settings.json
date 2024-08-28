@@ -4,5 +4,6 @@
 	},
 	"julia.environmentPath": "c:\\Users\\eorlo\\.julia\\environments\\v1.10",
 	"python.analysis.typeCheckingMode": "off",
+	"editor.fontFamily": "",
 	// "python.pythonPath": ".venv\\Scripts\\python.exe",
 }
