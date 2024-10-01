@@ -10,26 +10,21 @@ jupyter: win_pyenv3.11.1
 Table of Contents
 ----------
 
-- [Random Variables](#Random-Variables)
-    - [Types of Random Variables](#Types-of-random-variables)
+- [Types of Random Variables](#types-of-random-variables)
+  - [Types of Random Variables](#types-of-random-variables-1)
+    - [Discrete Random Variable](#discrete-random-variable)
+    - [Continuous Random Variable](#continuous-random-variable)
 - [What is a probability distribution?](#what-is-a-probability-distribution)
-    1. [Discrete Random Variable](#Discrete-Random-Variable)
-    2. [Continuous Random Variable](#Continuous-Random-Variable)
-
-- [Elements of the probability distribution](#Elements-of-the-probability-distribution)
-    1. [PMF (Probability Mass Function)](#Probability-Mass-Function)
-    2. [PDF (Probability Density Function)](#Probability-Density-Function)
-    3. [KDE (Kernel Density Estimation)](#Kernel-Density-Estimation)
-    4. [CDF (Cumulative Distribution Function)](#Cumulative-Distribution-Function)
-    5.
-- [Popular Probability Distributions](#Probability-Distributions)
-    - [Uniform Distribution](#Uniform-Distributions)
-    - [Normal Distribution](#Normal-Distributions)
-    - [Exponential Distribution](#Exponential-Distributions)
-    - [Binomial Distribution](#Binomial-Distributions)
-    - [Poisson Distribution](#Poisson-Distributions)
-        - [Bernoulli Distribution](#Bernoulli-Distributions)
-        - [Continuous Distributions](#Continuous-Distributions)
+- [Elements of the probability distribution](#elements-of-the-probability-distribution)
+  - [Probability Mass Function](#probability-mass-function)
+  - [Probability Density Function](#probability-density-function)
+  - [Kernel Density Estimation](#kernel-density-estimation)
+  - [Probability Distributions](#probability-distributions)
+    - [Uniform Distributions](#uniform-distributions)
+  - [Normal Distribution](#normal-distribution)
+  - [Exponential Distributions](#exponential-distributions)
+  - [Binomial Distributions](#binomial-distributions)
+  - [Poisson Distribution](#poisson-distribution)
 
 # Types of Random Variables
 A `random variable` is a variable whose values are determined by chance. A random variable can take on a set of possible different values, each with an associated probability.
@@ -203,3 +198,6 @@ ax = sns.displot(data, bins=100, kde=False, color="skyblue")
 ax.set(xlabel="Poisson Distribution", ylabel="Frequency")
 ax
 ```
+
+
+[def]: #uniform-distributions

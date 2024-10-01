@@ -83,7 +83,7 @@ class LocalVol:
     def _compute_local_var_from_vol(
         vol_param, x_strikes: np.array, time_grid: np.array
     ):
-        eps = 1e-8
+        eps = 1e-7
         log_x_strikes = np.log(x_strikes)
         if isinstance(vol_param, np.ndarray):
             iv = np.copy(vol_param)
@@ -95,6 +95,7 @@ class LocalVol:
                 for j in range(x_strikes.shape[0]):
                     iv[i, j] = vol_param(calc_implied_vol(time_grid[i], x_strikes[j]))
 
+        # TODO: I dont like `*=`, only foresee issues down the road with this.
         iv *= iv
         tiv = np.maximum((time_grid * iv.T).T, eps)
         h = log_x_strikes[1:] - log_x_strikes[:-1]
