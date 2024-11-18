@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ernest Orlowski">
+
+<title>mpl_derivatives</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="mpl_derivatives_files/libs/clipboard/clipboard.min.js"></script>
+<script src="mpl_derivatives_files/libs/quarto-html/quarto.js"></script>
+<script src="mpl_derivatives_files/libs/quarto-html/popper.min.js"></script>
+<script src="mpl_derivatives_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="mpl_derivatives_files/libs/quarto-html/anchor.min.js"></script>
+<link href="mpl_derivatives_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="mpl_derivatives_files/libs/quarto-html/quarto-syntax-highlighting-2486e1f0a3ee9ee1fc393803a1361cdb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="mpl_derivatives_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="mpl_derivatives_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="mpl_derivatives_files/libs/bootstrap/bootstrap-5bdc1ec511977dd36301403cf8f4f68d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="mpl_derivatives.md"><i class="bi bi-file-code"></i>Github (GFM)</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ernest Orlowski </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="cell-1" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.colors <span class="im">as</span> mcolors</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Rectangle</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-2" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42069</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_scatter(ax, prng, nb_samples: <span class="bu">int</span> <span class="op">=</span> <span class="dv">100</span>):</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> mu, sigma, marker <span class="kw">in</span> [(<span class="op">-</span><span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="st">"o"</span>), (<span class="fl">0.75</span>, <span class="fl">1.5</span>, <span class="st">"s"</span>)]:</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        x, y <span class="op">=</span> prng.normal(loc<span class="op">=</span>mu, scale<span class="op">=</span>sigma, size<span class="op">=</span>(<span class="dv">2</span>, nb_samples))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        ax.plot(x, y, ls<span class="op">=</span><span class="st">"none"</span>, marker<span class="op">=</span>marker)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"X-label"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="st">"Axes titel"</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_colored_lines(ax):</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plot lines w/ colors following the style color cycle."""</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    _t <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">100</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> sigmoid(_t, _t0):</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(<span class="op">-</span>(_t <span class="op">-</span> _t0)))</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    nb_colors <span class="op">=</span> <span class="bu">len</span>(plt.rcParams[<span class="st">"axes.prop_cycle"</span>])</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    shifts <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, nb_colors)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    amplitudes <span class="op">=</span> np.linspace(<span class="dv">1</span>, <span class="fl">1.5</span>, nb_colors)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _t0, a <span class="kw">in</span> <span class="bu">zip</span>(shifts, amplitudes):</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        ax.plot(_t, a <span class="op">*</span> sigmoid(_t, _t0), <span class="st">"-"</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim(<span class="op">-</span><span class="dv">10</span>, <span class="dv">10</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_bargraph(ax, prng, min_val: <span class="bu">int</span> <span class="op">=</span> <span class="dv">5</span>, max_val: <span class="bu">int</span> <span class="op">=</span> <span class="dv">25</span>, nb_samples: <span class="bu">int</span> <span class="op">=</span> <span class="dv">5</span>):</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plot 2 bar graphs side by side, w/ letters as x-tick labels."""</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    _x <span class="op">=</span> np.arange(nb_samples)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    _ya, _yb <span class="op">=</span> prng.randint(min_val, max_val, size<span class="op">=</span>(<span class="dv">2</span>, nb_samples))</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    width <span class="op">=</span> <span class="fl">0.25</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    ax.bar(_x, _ya, width)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    ax.bar(_x <span class="op">+</span> width, _yb, width, color<span class="op">=</span><span class="st">"C2"</span>)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    ax.set_xticks(_x <span class="op">+</span> width, labels<span class="op">=</span>[<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>])</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_circles(ax, prng, nb_samples: <span class="bu">int</span> <span class="op">=</span> <span class="dv">15</span>):</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co">    Plot circle patches.</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co">    NB: draws a fixed amt of samples, rather tahn using the len of the color cycle, bc diff</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co">    styles may hae diff numbers of colors.</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> sty_dict, j <span class="kw">in</span> <span class="bu">zip</span>(plt.rcParams[<span class="st">"axes.prop_cycle"</span>](), <span class="bu">range</span>(nb_samples)):</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>        ax.add_patch(</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>            plt.Circle(</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>                prng.normal(scale<span class="op">=</span><span class="dv">3</span>, size<span class="op">=</span><span class="dv">2</span>), radius<span class="op">=</span><span class="fl">1.0</span>, color<span class="op">=</span>sty_dict[<span class="st">"color"</span>]</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    ax.grid(visible<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add title for enabling grid</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"ax.grid(True)"</span>, family<span class="op">=</span><span class="st">"monospace"</span>, fontsize<span class="op">=</span><span class="st">"small"</span>)</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim([<span class="op">-</span><span class="dv">4</span>, <span class="dv">8</span>])</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim([<span class="op">-</span><span class="dv">5</span>, <span class="dv">6</span>])</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    ax.set_aspect(<span class="st">"equal"</span>, adjustable<span class="op">=</span><span class="st">"box"</span>)  <span class="co"># to plot circles as circles</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_img_and_patch(ax, prng, size<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">20</span>)):</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plot an image with random values and superimpose a circular patch."""</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>    vals <span class="op">=</span> prng.random_sample(size<span class="op">=</span>size)</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    ax.imshow(vals, interpolation<span class="op">=</span><span class="st">"none"</span>)</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    _c <span class="op">=</span> plt.Circle((<span class="dv">5</span>, <span class="dv">5</span>), radius<span class="op">=</span><span class="dv">5</span>, label<span class="op">=</span><span class="st">"patch"</span>)</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(_c)</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># remove ticks</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>    ax.set_xticks([])</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>    ax.set_yticks([])</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_histogram(ax, prng, nb_samples: <span class="bu">int</span> <span class="op">=</span> <span class="dv">10_000</span>):</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plot 4 histograms and text annotations."""</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>    _params <span class="op">=</span> ((<span class="dv">10</span>, <span class="dv">10</span>), (<span class="dv">4</span>, <span class="dv">12</span>), (<span class="dv">50</span>, <span class="dv">12</span>), (<span class="dv">6</span>, <span class="dv">55</span>))</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _a, _b <span class="kw">in</span> _params:</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>        vals <span class="op">=</span> prng.beta(_a, _b, size<span class="op">=</span>nb_samples)</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>        ax.hist(vals, histtype<span class="op">=</span><span class="st">"stepfilled"</span>, bins<span class="op">=</span><span class="dv">30</span>, alpha<span class="op">=</span><span class="fl">0.8</span>, density<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add small annotation.</span></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>    ax.annotate(</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Annotation"</span>,</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>        xy<span class="op">=</span>(<span class="fl">0.25</span>, <span class="fl">4.25</span>),</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>        xytext<span class="op">=</span>(<span class="fl">0.9</span>, <span class="fl">0.9</span>),</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>        textcoords<span class="op">=</span>ax.transAxes,</span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>        va<span class="op">=</span><span class="st">"top"</span>,</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">"right"</span>,</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>        bbox<span class="op">=</span><span class="bu">dict</span>(boxstyle<span class="op">=</span><span class="st">"round"</span>, alpha<span class="op">=</span><span class="fl">0.2</span>),</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>        arrowprops<span class="op">=</span><span class="bu">dict</span>(</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>            arrowstyle<span class="op">=</span><span class="st">"-&gt;"</span>, connectionstyle<span class="op">=</span><span class="st">"angle,angleA=-95,angleB=35,rad=10"</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_figure(style_label: <span class="bu">str</span> <span class="op">=</span> <span class="st">""</span>):</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Setup &amp; plot the demonstration figure w/ given style."""</span></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Use dedicated RandomState instance to draw the same "random" values across different figures.</span></span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>    prng <span class="op">=</span> np.random.RandomState(<span class="dv">96917002</span>)</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>    fig, axs <span class="op">=</span> plt.subplots(</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>        ncols<span class="op">=</span><span class="dv">6</span>, nrows<span class="op">=</span><span class="dv">1</span>, num<span class="op">=</span>style_label, figsize<span class="op">=</span>(<span class="fl">14.8</span>, <span class="fl">2.8</span>), squeeze<span class="op">=</span><span class="va">True</span></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>    <span class="co"># make a subtitle, in the same style for all subfigures.</span></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>    <span class="co"># except those w/ dark backgrounds, which get a lighter color:</span></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>    background_color <span class="op">=</span> mcolors.rgb_to_hsv(</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>        mcolors.to_rgb(plt.rcParams[<span class="st">"figure.facecolor"</span>])</span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>    )[<span class="dv">2</span>]</span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> background_color <span class="op">&lt;</span> <span class="fl">0.5</span>:</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>        title_color <span class="op">=</span> [<span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="dv">1</span>]</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>        title_color <span class="op">=</span> np.array([<span class="dv">19</span>, <span class="dv">6</span>, <span class="dv">84</span>]) <span class="op">/</span> <span class="dv">256</span></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>    fig.suptitle(</span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>        style_label,</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="fl">0.01</span>,</span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">"left"</span>,</span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>title_color,</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>        fontsize<span class="op">=</span><span class="dv">14</span>,</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>        fontfamily<span class="op">=</span><span class="st">"DejaVu Sans"</span>,</span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>        fontweight<span class="op">=</span><span class="st">"normal"</span>,</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>    plot_scatter(axs[<span class="dv">0</span>], prng)</span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>    plot_img_and_patch(axs[<span class="dv">1</span>], prng)</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>    plot_bargraph(axs[<span class="dv">2</span>], prng)</span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>    plot_colored_lines(axs[<span class="dv">3</span>], prng)</span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>    plot_histogram(axs[<span class="dv">4</span>], prng)</span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>    plot_circles(axs[<span class="dv">5</span>], prng)</span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>    rec <span class="op">=</span> Rectangle((<span class="dv">1</span> <span class="op">+</span> <span class="fl">0.025</span>, <span class="op">-</span><span class="dv">2</span>), <span class="fl">0.05</span>, <span class="dv">16</span>, clip_on<span class="op">=</span><span class="va">False</span>, color<span class="op">=</span><span class="st">"gray"</span>)</span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>    axs[<span class="dv">4</span>].add_artist(rec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-3" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">"./light_pastel.mplstyle"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>plot_figure(style_label<span class="op">=</span><span class="st">"Quanty Pastel"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">"quant_pastel_example.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg ansi-bold">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg ansi-bold">TypeError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg ansi-bold">In[11], line 2</span>
+<span class="ansi-green-fg">      1</span> plt<span style="color:rgb(98,98,98)">.</span>style<span style="color:rgb(98,98,98)">.</span>use(<span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">./light_pastel.mplstyle</span><span style="color:rgb(175,0,0)">"</span>)
+<span class="ansi-green-fg ansi-bold">----&gt; 2</span> <span class="ansi-yellow-bg">plot_figure</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">style_label</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">Quanty Pastel</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">      3</span> plt<span style="color:rgb(98,98,98)">.</span>savefig(<span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">quant_pastel_example.png</span><span style="color:rgb(175,0,0)">"</span>)
+
+Cell <span class="ansi-green-fg ansi-bold">In[9], line 130</span>, in <span class="ansi-cyan-fg">plot_figure</span><span class="ansi-blue-fg ansi-bold">(style_label)</span>
+<span class="ansi-green-fg">    128</span> plot_img_and_patch(axs[<span style="color:rgb(98,98,98)">1</span>], prng)
+<span class="ansi-green-fg">    129</span> plot_bargraph(axs[<span style="color:rgb(98,98,98)">2</span>], prng)
+<span class="ansi-green-fg ansi-bold">--&gt; 130</span> <span class="ansi-yellow-bg">plot_colored_lines</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">axs</span><span class="ansi-yellow-bg">[</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">3</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">prng</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    131</span> plot_histogram(axs[<span style="color:rgb(98,98,98)">4</span>], prng)
+<span class="ansi-green-fg">    132</span> plot_circles(axs[<span style="color:rgb(98,98,98)">5</span>], prng)
+
+<span class="ansi-red-fg ansi-bold">TypeError</span>: plot_colored_lines() takes 1 positional argument but 2 were given</pre>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Error in callback &lt;function _draw_all_if_interactive at 0x00000204E82537E0&gt; (for post_execute), with arguments args (),kwargs {}:</code></pre>
+</div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg ansi-bold">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg ansi-bold">RuntimeError</span>                              Traceback (most recent call last)
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\pyplot.py:268</span>, in <span class="ansi-cyan-fg">_draw_all_if_interactive</span><span class="ansi-blue-fg ansi-bold">()</span>
+<span class="ansi-green-fg">    266</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span> <span style="color:rgb(0,0,255)">_draw_all_if_interactive</span>() <span style="color:rgb(98,98,98)">-</span><span style="color:rgb(98,98,98)">&gt;</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">    267</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> matplotlib<span style="color:rgb(98,98,98)">.</span>is_interactive():
+<span class="ansi-green-fg ansi-bold">--&gt; 268</span>         <span class="ansi-yellow-bg">draw_all</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\_pylab_helpers.py:131</span>, in <span class="ansi-cyan-fg">Gcf.draw_all</span><span class="ansi-blue-fg ansi-bold">(cls, force)</span>
+<span class="ansi-green-fg">    129</span> <span style="font-weight:bold;color:rgb(0,135,0)">for</span> manager <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">cls</span><span style="color:rgb(98,98,98)">.</span>get_all_fig_managers():
+<span class="ansi-green-fg">    130</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> force <span style="font-weight:bold;color:rgb(175,0,255)">or</span> manager<span style="color:rgb(98,98,98)">.</span>canvas<span style="color:rgb(98,98,98)">.</span>figure<span style="color:rgb(98,98,98)">.</span>stale:
+<span class="ansi-green-fg ansi-bold">--&gt; 131</span>         <span class="ansi-yellow-bg">manager</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">canvas</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">draw_idle</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\backend_bases.py:1905</span>, in <span class="ansi-cyan-fg">FigureCanvasBase.draw_idle</span><span class="ansi-blue-fg ansi-bold">(self, *args, **kwargs)</span>
+<span class="ansi-green-fg">   1903</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_is_idle_drawing:
+<span class="ansi-green-fg">   1904</span>     <span style="font-weight:bold;color:rgb(0,135,0)">with</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_idle_draw_cntx():
+<span class="ansi-green-fg ansi-bold">-&gt; 1905</span>         <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\backends\backend_agg.py:387</span>, in <span class="ansi-cyan-fg">FigureCanvasAgg.draw</span><span class="ansi-blue-fg ansi-bold">(self)</span>
+<span class="ansi-green-fg">    384</span> <span style="font-style:italic;color:rgb(95,135,135)"># Acquire a lock on the shared font cache.</span>
+<span class="ansi-green-fg">    385</span> <span style="font-weight:bold;color:rgb(0,135,0)">with</span> (<span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>toolbar<span style="color:rgb(98,98,98)">.</span>_wait_cursor_for_draw_cm() <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>toolbar
+<span class="ansi-green-fg">    386</span>       <span style="font-weight:bold;color:rgb(0,135,0)">else</span> nullcontext()):
+<span class="ansi-green-fg ansi-bold">--&gt; 387</span>     <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">figure</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    388</span>     <span style="font-style:italic;color:rgb(95,135,135)"># A GUI class may be need to update a window using this draw, so</span>
+<span class="ansi-green-fg">    389</span>     <span style="font-style:italic;color:rgb(95,135,135)"># don't forget to call the superclass.</span>
+<span class="ansi-green-fg">    390</span>     <span style="color:rgb(0,135,0)">super</span>()<span style="color:rgb(98,98,98)">.</span>draw()
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\artist.py:95</span>, in <span class="ansi-cyan-fg">_finalize_rasterization.&lt;locals&gt;.draw_wrapper</span><span class="ansi-blue-fg ansi-bold">(artist, renderer, *args, **kwargs)</span>
+<span class="ansi-green-fg">     93</span> <span style="color:rgb(175,0,255)">@wraps</span>(draw)
+<span class="ansi-green-fg">     94</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span> <span style="color:rgb(0,0,255)">draw_wrapper</span>(artist, renderer, <span style="color:rgb(98,98,98)">*</span>args, <span style="color:rgb(98,98,98)">*</span><span style="color:rgb(98,98,98)">*</span>kwargs):
+<span class="ansi-green-fg ansi-bold">---&gt; 95</span>     result <span style="color:rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">artist</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     96</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> renderer<span style="color:rgb(98,98,98)">.</span>_rasterizing:
+<span class="ansi-green-fg">     97</span>         renderer<span style="color:rgb(98,98,98)">.</span>stop_rasterizing()
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\artist.py:72</span>, in <span class="ansi-cyan-fg">allow_rasterization.&lt;locals&gt;.draw_wrapper</span><span class="ansi-blue-fg ansi-bold">(artist, renderer)</span>
+<span class="ansi-green-fg">     69</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> artist<span style="color:rgb(98,98,98)">.</span>get_agg_filter() <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">     70</span>         renderer<span style="color:rgb(98,98,98)">.</span>start_filter()
+<span class="ansi-green-fg ansi-bold">---&gt; 72</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">artist</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     73</span> <span style="font-weight:bold;color:rgb(0,135,0)">finally</span>:
+<span class="ansi-green-fg">     74</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> artist<span style="color:rgb(98,98,98)">.</span>get_agg_filter() <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\figure.py:3162</span>, in <span class="ansi-cyan-fg">Figure.draw</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">   3159</span>             <span style="font-style:italic;color:rgb(95,135,135)"># ValueError can occur when resizing a window.</span>
+<span class="ansi-green-fg">   3161</span>     <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>patch<span style="color:rgb(98,98,98)">.</span>draw(renderer)
+<span class="ansi-green-fg ansi-bold">-&gt; 3162</span>     <span class="ansi-yellow-bg">mimage</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_draw_list_compositing_images</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   3163</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">artists</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">suppressComposite</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   3165</span>     renderer<span style="color:rgb(98,98,98)">.</span>close_group(<span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">figure</span><span style="color:rgb(175,0,0)">'</span>)
+<span class="ansi-green-fg">   3166</span> <span style="font-weight:bold;color:rgb(0,135,0)">finally</span>:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\image.py:132</span>, in <span class="ansi-cyan-fg">_draw_list_compositing_images</span><span class="ansi-blue-fg ansi-bold">(renderer, parent, artists, suppress_composite)</span>
+<span class="ansi-green-fg">    130</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> not_composite <span style="font-weight:bold;color:rgb(175,0,255)">or</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> has_images:
+<span class="ansi-green-fg">    131</span>     <span style="font-weight:bold;color:rgb(0,135,0)">for</span> a <span style="font-weight:bold;color:rgb(175,0,255)">in</span> artists:
+<span class="ansi-green-fg ansi-bold">--&gt; 132</span>         <span class="ansi-yellow-bg">a</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    133</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    134</span>     <span style="font-style:italic;color:rgb(95,135,135)"># Composite any adjacent images together</span>
+<span class="ansi-green-fg">    135</span>     image_group <span style="color:rgb(98,98,98)">=</span> []
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\artist.py:72</span>, in <span class="ansi-cyan-fg">allow_rasterization.&lt;locals&gt;.draw_wrapper</span><span class="ansi-blue-fg ansi-bold">(artist, renderer)</span>
+<span class="ansi-green-fg">     69</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> artist<span style="color:rgb(98,98,98)">.</span>get_agg_filter() <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">     70</span>         renderer<span style="color:rgb(98,98,98)">.</span>start_filter()
+<span class="ansi-green-fg ansi-bold">---&gt; 72</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">artist</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     73</span> <span style="font-weight:bold;color:rgb(0,135,0)">finally</span>:
+<span class="ansi-green-fg">     74</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> artist<span style="color:rgb(98,98,98)">.</span>get_agg_filter() <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axes\_base.py:3101</span>, in <span class="ansi-cyan-fg">_AxesBase.draw</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">   3098</span>     <span style="font-weight:bold;color:rgb(0,135,0)">for</span> spine <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>spines<span style="color:rgb(98,98,98)">.</span>values():
+<span class="ansi-green-fg">   3099</span>         artists<span style="color:rgb(98,98,98)">.</span>remove(spine)
+<span class="ansi-green-fg ansi-bold">-&gt; 3101</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_update_title_position</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   3103</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>axison:
+<span class="ansi-green-fg">   3104</span>     <span style="font-weight:bold;color:rgb(0,135,0)">for</span> _axis <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_axis_map<span style="color:rgb(98,98,98)">.</span>values():
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axes\_base.py:3045</span>, in <span class="ansi-cyan-fg">_AxesBase._update_title_position</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">   3043</span> top <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">max</span>(top, bb<span style="color:rgb(98,98,98)">.</span>ymax)
+<span class="ansi-green-fg">   3044</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> title<span style="color:rgb(98,98,98)">.</span>get_text():
+<span class="ansi-green-fg ansi-bold">-&gt; 3045</span>     <span class="ansi-yellow-bg">ax</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">yaxis</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_tightbbox</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>  <span style="font-style:italic;color:rgb(95,135,135)"># update offsetText</span>
+<span class="ansi-green-fg">   3046</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ax<span style="color:rgb(98,98,98)">.</span>yaxis<span style="color:rgb(98,98,98)">.</span>offsetText<span style="color:rgb(98,98,98)">.</span>get_text():
+<span class="ansi-green-fg">   3047</span>         bb <span style="color:rgb(98,98,98)">=</span> ax<span style="color:rgb(98,98,98)">.</span>yaxis<span style="color:rgb(98,98,98)">.</span>offsetText<span style="color:rgb(98,98,98)">.</span>get_tightbbox(renderer)
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axis.py:1372</span>, in <span class="ansi-cyan-fg">Axis.get_tightbbox</span><span class="ansi-blue-fg ansi-bold">(self, renderer, for_layout_only)</span>
+<span class="ansi-green-fg">   1369</span>     renderer <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>figure<span style="color:rgb(98,98,98)">.</span>_get_renderer()
+<span class="ansi-green-fg">   1370</span> ticks_to_draw <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_update_ticks()
+<span class="ansi-green-fg ansi-bold">-&gt; 1372</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_update_label_position</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1374</span> <span style="font-style:italic;color:rgb(95,135,135)"># go back to just this axis's tick labels</span>
+<span class="ansi-green-fg">   1375</span> tlb1, tlb2 <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_get_ticklabel_bboxes(ticks_to_draw, renderer)
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axis.py:2654</span>, in <span class="ansi-cyan-fg">YAxis._update_label_position</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">   2650</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span>
+<span class="ansi-green-fg">   2652</span> <span style="font-style:italic;color:rgb(95,135,135)"># get bounding boxes for this axis and any siblings</span>
+<span class="ansi-green-fg">   2653</span> <span style="font-style:italic;color:rgb(95,135,135)"># that have been set by `fig.align_ylabels()`</span>
+<span class="ansi-green-fg ansi-bold">-&gt; 2654</span> bboxes, bboxes2 <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_get_tick_boxes_siblings</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2655</span> x, y <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>label<span style="color:rgb(98,98,98)">.</span>get_position()
+<span class="ansi-green-fg">   2656</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>label_position <span style="color:rgb(98,98,98)">==</span> <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">left</span><span style="color:rgb(175,0,0)">'</span>:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axis.py:2206</span>, in <span class="ansi-cyan-fg">Axis._get_tick_boxes_siblings</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">   2204</span> axis <span style="color:rgb(98,98,98)">=</span> ax<span style="color:rgb(98,98,98)">.</span>_axis_map[name]
+<span class="ansi-green-fg">   2205</span> ticks_to_draw <span style="color:rgb(98,98,98)">=</span> axis<span style="color:rgb(98,98,98)">.</span>_update_ticks()
+<span class="ansi-green-fg ansi-bold">-&gt; 2206</span> tlb, tlb2 <span style="color:rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">axis</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_get_ticklabel_bboxes</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">ticks_to_draw</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2207</span> bboxes<span style="color:rgb(98,98,98)">.</span>extend(tlb)
+<span class="ansi-green-fg">   2208</span> bboxes2<span style="color:rgb(98,98,98)">.</span>extend(tlb2)
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axis.py:1351</span>, in <span class="ansi-cyan-fg">Axis._get_ticklabel_bboxes</span><span class="ansi-blue-fg ansi-bold">(self, ticks, renderer)</span>
+<span class="ansi-green-fg">   1349</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> renderer <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">   1350</span>     renderer <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>figure<span style="color:rgb(98,98,98)">.</span>_get_renderer()
+<span class="ansi-green-fg ansi-bold">-&gt; 1351</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> ([<span class="ansi-yellow-bg">tick</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">label1</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_window_extent</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1352</span>          <span style="font-weight:bold;color:rgb(0,135,0)">for</span> tick <span style="font-weight:bold;color:rgb(175,0,255)">in</span> ticks <span style="font-weight:bold;color:rgb(0,135,0)">if</span> tick<span style="color:rgb(98,98,98)">.</span>label1<span style="color:rgb(98,98,98)">.</span>get_visible()],
+<span class="ansi-green-fg">   1353</span>         [tick<span style="color:rgb(98,98,98)">.</span>label2<span style="color:rgb(98,98,98)">.</span>get_window_extent(renderer)
+<span class="ansi-green-fg">   1354</span>          <span style="font-weight:bold;color:rgb(0,135,0)">for</span> tick <span style="font-weight:bold;color:rgb(175,0,255)">in</span> ticks <span style="font-weight:bold;color:rgb(0,135,0)">if</span> tick<span style="color:rgb(98,98,98)">.</span>label2<span style="color:rgb(98,98,98)">.</span>get_visible()])
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\text.py:959</span>, in <span class="ansi-cyan-fg">Text.get_window_extent</span><span class="ansi-blue-fg ansi-bold">(self, renderer, dpi)</span>
+<span class="ansi-green-fg">    954</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">RuntimeError</span>(
+<span class="ansi-green-fg">    955</span>         <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">Cannot get window extent of text w/o renderer. You likely </span><span style="color:rgb(175,0,0)">"</span>
+<span class="ansi-green-fg">    956</span>         <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">want to call </span><span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">figure.draw_without_rendering()</span><span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)"> first.</span><span style="color:rgb(175,0,0)">"</span>)
+<span class="ansi-green-fg">    958</span> <span style="font-weight:bold;color:rgb(0,135,0)">with</span> cbook<span style="color:rgb(98,98,98)">.</span>_setattr_cm(<span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>figure, dpi<span style="color:rgb(98,98,98)">=</span>dpi):
+<span class="ansi-green-fg ansi-bold">--&gt; 959</span>     bbox, info, descent <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_get_layout</span><span class="ansi-yellow-bg">(</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    960</span>     x, y <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>get_unitless_position()
+<span class="ansi-green-fg">    961</span>     x, y <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>get_transform()<span style="color:rgb(98,98,98)">.</span>transform((x, y))
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\text.py:373</span>, in <span class="ansi-cyan-fg">Text._get_layout</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">    370</span> ys <span style="color:rgb(98,98,98)">=</span> []
+<span class="ansi-green-fg">    372</span> <span style="font-style:italic;color:rgb(95,135,135)"># Full vertical extent of font, including ascenders and descenders:</span>
+<span class="ansi-green-fg ansi-bold">--&gt; 373</span> _, lp_h, lp_d <span style="color:rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_get_text_metrics_with_cache</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    374</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">lp</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_fontproperties</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    375</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">ismath</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">TeX</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">if</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_usetex</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">else</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">False</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">dpi</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">figure</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">dpi</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    376</span> min_dy <span style="color:rgb(98,98,98)">=</span> (lp_h <span style="color:rgb(98,98,98)">-</span> lp_d) <span style="color:rgb(98,98,98)">*</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_linespacing
+<span class="ansi-green-fg">    378</span> <span style="font-weight:bold;color:rgb(0,135,0)">for</span> i, line <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">enumerate</span>(lines):
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\text.py:69</span>, in <span class="ansi-cyan-fg">_get_text_metrics_with_cache</span><span class="ansi-blue-fg ansi-bold">(renderer, text, fontprop, ismath, dpi)</span>
+<span class="ansi-green-fg">     66</span> <span style="font-style:italic;color:rgb(175,0,0)">"""Call ``renderer.get_text_width_height_descent``, caching the results."""</span>
+<span class="ansi-green-fg">     67</span> <span style="font-style:italic;color:rgb(95,135,135)"># Cached based on a copy of fontprop so that later in-place mutations of</span>
+<span class="ansi-green-fg">     68</span> <span style="font-style:italic;color:rgb(95,135,135)"># the passed-in argument do not mess up the cache.</span>
+<span class="ansi-green-fg ansi-bold">---&gt; 69</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">_get_text_metrics_with_cache_impl</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">     70</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">weakref</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">ref</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">fontprop</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">copy</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ismath</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">dpi</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\text.py:77</span>, in <span class="ansi-cyan-fg">_get_text_metrics_with_cache_impl</span><span class="ansi-blue-fg ansi-bold">(renderer_ref, text, fontprop, ismath, dpi)</span>
+<span class="ansi-green-fg">     73</span> <span style="color:rgb(175,0,255)">@functools</span><span style="color:rgb(98,98,98)">.</span>lru_cache(<span style="color:rgb(98,98,98)">4096</span>)
+<span class="ansi-green-fg">     74</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span> <span style="color:rgb(0,0,255)">_get_text_metrics_with_cache_impl</span>(
+<span class="ansi-green-fg">     75</span>         renderer_ref, text, fontprop, ismath, dpi):
+<span class="ansi-green-fg">     76</span>     <span style="font-style:italic;color:rgb(95,135,135)"># dpi is unused, but participates in cache invalidation (via the renderer).</span>
+<span class="ansi-green-fg ansi-bold">---&gt; 77</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">renderer_ref</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_text_width_height_descent</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">fontprop</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ismath</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\backends\backend_agg.py:212</span>, in <span class="ansi-cyan-fg">RendererAgg.get_text_width_height_descent</span><span class="ansi-blue-fg ansi-bold">(self, s, prop, ismath)</span>
+<span class="ansi-green-fg">    210</span> _api<span style="color:rgb(98,98,98)">.</span>check_in_list([<span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">TeX</span><span style="color:rgb(175,0,0)">"</span>, <span style="font-weight:bold;color:rgb(0,135,0)">True</span>, <span style="font-weight:bold;color:rgb(0,135,0)">False</span>], ismath<span style="color:rgb(98,98,98)">=</span>ismath)
+<span class="ansi-green-fg">    211</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ismath <span style="color:rgb(98,98,98)">==</span> <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">TeX</span><span style="color:rgb(175,0,0)">"</span>:
+<span class="ansi-green-fg ansi-bold">--&gt; 212</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">super</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_text_width_height_descent</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">s</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">prop</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ismath</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    214</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ismath:
+<span class="ansi-green-fg">    215</span>     ox, oy, width, height, descent, font_image <span style="color:rgb(98,98,98)">=</span> \
+<span class="ansi-green-fg">    216</span>         <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>mathtext_parser<span style="color:rgb(98,98,98)">.</span>parse(s, <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>dpi, prop)
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\backend_bases.py:597</span>, in <span class="ansi-cyan-fg">RendererBase.get_text_width_height_descent</span><span class="ansi-blue-fg ansi-bold">(self, s, prop, ismath)</span>
+<span class="ansi-green-fg">    593</span> fontsize <span style="color:rgb(98,98,98)">=</span> prop<span style="color:rgb(98,98,98)">.</span>get_size_in_points()
+<span class="ansi-green-fg">    595</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ismath <span style="color:rgb(98,98,98)">==</span> <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">TeX</span><span style="color:rgb(175,0,0)">'</span>:
+<span class="ansi-green-fg">    596</span>     <span style="font-style:italic;color:rgb(95,135,135)"># todo: handle properties</span>
+<span class="ansi-green-fg ansi-bold">--&gt; 597</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_texmanager</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_text_width_height_descent</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    598</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">s</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">fontsize</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">renderer</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    600</span> dpi <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>points_to_pixels(<span style="color:rgb(98,98,98)">72</span>)
+<span class="ansi-green-fg">    601</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ismath:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\texmanager.py:363</span>, in <span class="ansi-cyan-fg">TexManager.get_text_width_height_descent</span><span class="ansi-blue-fg ansi-bold">(cls, tex, fontsize, renderer)</span>
+<span class="ansi-green-fg">    361</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> tex<span style="color:rgb(98,98,98)">.</span>strip() <span style="color:rgb(98,98,98)">==</span> <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">'</span>:
+<span class="ansi-green-fg">    362</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="color:rgb(98,98,98)">0</span>, <span style="color:rgb(98,98,98)">0</span>, <span style="color:rgb(98,98,98)">0</span>
+<span class="ansi-green-fg ansi-bold">--&gt; 363</span> dvifile <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">cls</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">make_dvi</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">tex</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">fontsize</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    364</span> dpi_fraction <span style="color:rgb(98,98,98)">=</span> renderer<span style="color:rgb(98,98,98)">.</span>points_to_pixels(<span style="color:rgb(98,98,98)">1.</span>) <span style="font-weight:bold;color:rgb(0,135,0)">if</span> renderer <span style="font-weight:bold;color:rgb(0,135,0)">else</span> <span style="color:rgb(98,98,98)">1</span>
+<span class="ansi-green-fg">    365</span> <span style="font-weight:bold;color:rgb(0,135,0)">with</span> dviread<span style="color:rgb(98,98,98)">.</span>Dvi(dvifile, <span style="color:rgb(98,98,98)">72</span> <span style="color:rgb(98,98,98)">*</span> dpi_fraction) <span style="font-weight:bold;color:rgb(0,135,0)">as</span> dvi:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\texmanager.py:295</span>, in <span class="ansi-cyan-fg">TexManager.make_dvi</span><span class="ansi-blue-fg ansi-bold">(cls, tex, fontsize)</span>
+<span class="ansi-green-fg">    293</span>     <span style="font-weight:bold;color:rgb(0,135,0)">with</span> TemporaryDirectory(<span style="color:rgb(0,135,0)">dir</span><span style="color:rgb(98,98,98)">=</span>cwd) <span style="font-weight:bold;color:rgb(0,135,0)">as</span> tmpdir:
+<span class="ansi-green-fg">    294</span>         tmppath <span style="color:rgb(98,98,98)">=</span> Path(tmpdir)
+<span class="ansi-green-fg ansi-bold">--&gt; 295</span>         <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">cls</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_run_checked_subprocess</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    296</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">[</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">latex</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">-interaction=nonstopmode</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">--halt-on-error</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    297</span> <span class="ansi-yellow-bg">             </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">f</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">--output-directory=</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">{</span><span class="ansi-yellow-bg">tmppath</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">name</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">}</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    298</span> <span class="ansi-yellow-bg">             </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">f</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">{</span><span class="ansi-yellow-bg">texfile</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">name</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">}</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">tex</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">cwd</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">cwd</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    299</span>         (tmppath <span style="color:rgb(98,98,98)">/</span> Path(dvifile)<span style="color:rgb(98,98,98)">.</span>name)<span style="color:rgb(98,98,98)">.</span>replace(dvifile)
+<span class="ansi-green-fg">    300</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> dvifile
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\texmanager.py:258</span>, in <span class="ansi-cyan-fg">TexManager._run_checked_subprocess</span><span class="ansi-blue-fg ansi-bold">(cls, command, tex, cwd)</span>
+<span class="ansi-green-fg">    254</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">RuntimeError</span>(
+<span class="ansi-green-fg">    255</span>         <span style="color:rgb(175,0,0)">f</span><span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">Failed to process string with tex because </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>command[<span style="color:rgb(98,98,98)">0</span>]<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span style="color:rgb(175,0,0)"> </span><span style="color:rgb(175,0,0)">'</span>
+<span class="ansi-green-fg">    256</span>         <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">could not be found</span><span style="color:rgb(175,0,0)">'</span>) <span style="font-weight:bold;color:rgb(0,135,0)">from</span> <span style="font-weight:bold;color:rgb(0,0,255)">exc</span>
+<span class="ansi-green-fg">    257</span> <span style="font-weight:bold;color:rgb(0,135,0)">except</span> subprocess<span style="color:rgb(98,98,98)">.</span>CalledProcessError <span style="font-weight:bold;color:rgb(0,135,0)">as</span> exc:
+<span class="ansi-green-fg ansi-bold">--&gt; 258</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">RuntimeError</span>(
+<span class="ansi-green-fg">    259</span>         <span style="color:rgb(175,0,0)">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{prog}</span><span style="color:rgb(175,0,0)"> was not able to process the following string:</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="color:rgb(175,0,0)">'</span>
+<span class="ansi-green-fg">    260</span>         <span style="color:rgb(175,0,0)">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{tex!r}</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="color:rgb(175,0,0)">'</span>
+<span class="ansi-green-fg">    261</span>         <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">Here is the full command invocation and its output:</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="color:rgb(175,0,0)">'</span>
+<span class="ansi-green-fg">    262</span>         <span style="color:rgb(175,0,0)">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{format_command}</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="color:rgb(175,0,0)">'</span>
+<span class="ansi-green-fg">    263</span>         <span style="color:rgb(175,0,0)">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{exc}</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="color:rgb(175,0,0)">'</span><span style="color:rgb(98,98,98)">.</span>format(
+<span class="ansi-green-fg">    264</span>             prog<span style="color:rgb(98,98,98)">=</span>command[<span style="color:rgb(98,98,98)">0</span>],
+<span class="ansi-green-fg">    265</span>             format_command<span style="color:rgb(98,98,98)">=</span>cbook<span style="color:rgb(98,98,98)">.</span>_pformat_subprocess(command),
+<span class="ansi-green-fg">    266</span>             tex<span style="color:rgb(98,98,98)">=</span>tex<span style="color:rgb(98,98,98)">.</span>encode(<span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">unicode_escape</span><span style="color:rgb(175,0,0)">'</span>),
+<span class="ansi-green-fg">    267</span>             exc<span style="color:rgb(98,98,98)">=</span>exc<span style="color:rgb(98,98,98)">.</span>output<span style="color:rgb(98,98,98)">.</span>decode(<span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">utf-8</span><span style="color:rgb(175,0,0)">'</span>, <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">backslashreplace</span><span style="color:rgb(175,0,0)">'</span>))
+<span class="ansi-green-fg">    268</span>         ) <span style="font-weight:bold;color:rgb(0,135,0)">from</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">    269</span> _log<span style="color:rgb(98,98,98)">.</span>debug(report)
+<span class="ansi-green-fg">    270</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> report
+
+<span class="ansi-red-fg ansi-bold">RuntimeError</span>: latex was not able to process the following string:
+b'lp'
+
+Here is the full command invocation and its output:
+
+latex -interaction=nonstopmode --halt-on-error --output-directory=tmp5f577ce3 03c6366f7a4e307ef0b23ee8720251c2.tex
+
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1 Portable) (preloaded format=latex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(03c6366f7a4e307ef0b23ee8720251c2.tex
+LaTeX2e &lt;2023-11-01&gt; patch level 1
+L3 programming layer &lt;2024-01-04&gt;
+
+(C:\ProgramData\scoop\apps\latex\current\texmfs\install\tex/latex/base\article.
+cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+
+(C:\ProgramData\scoop\apps\latex\current\texmfs\install\tex/latex/base\size10.c
+lo))
+
+! LaTeX Error: File `type1cm.sty' not found.
+
+Type X to quit or &lt;RETURN&gt; to proceed,
+or enter new name. (Default extension: sty)
+
+Enter file name: 
+! Emergency stop.
+&lt;read *&gt; 
+         
+l.8 \usepackage
+               {type1ec}^^M
+No pages of output.
+Transcript written on C:\Users\eo\.matplotlib\tex.cache\03\c6\tmp5f577ce3\03c63
+66f7a4e307ef0b23ee8720251c2.log.
+latex: major issue: So far, you have not checked for MiKTeX updates.
+
+
+</pre>
+</div>
+</div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg ansi-bold">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg ansi-bold">RuntimeError</span>                              Traceback (most recent call last)
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\IPython\core\formatters.py:343</span>, in <span class="ansi-cyan-fg">BaseFormatter.__call__</span><span class="ansi-blue-fg ansi-bold">(self, obj)</span>
+<span class="ansi-green-fg">    341</span>     <span style="font-weight:bold;color:rgb(0,135,0)">pass</span>
+<span class="ansi-green-fg">    342</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg ansi-bold">--&gt; 343</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">printer</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">obj</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    344</span> <span style="font-style:italic;color:rgb(95,135,135)"># Finally look for special method names</span>
+<span class="ansi-green-fg">    345</span> method <span style="color:rgb(98,98,98)">=</span> get_real_method(obj, <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>print_method)
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\IPython\core\pylabtools.py:170</span>, in <span class="ansi-cyan-fg">print_figure</span><span class="ansi-blue-fg ansi-bold">(fig, fmt, bbox_inches, base64, **kwargs)</span>
+<span class="ansi-green-fg">    167</span>     <span style="font-weight:bold;color:rgb(0,135,0)">from</span> <span style="font-weight:bold;color:rgb(0,0,255)">matplotlib</span><span style="font-weight:bold;color:rgb(0,0,255)">.</span><span style="font-weight:bold;color:rgb(0,0,255)">backend_bases</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span> FigureCanvasBase
+<span class="ansi-green-fg">    168</span>     FigureCanvasBase(fig)
+<span class="ansi-green-fg ansi-bold">--&gt; 170</span> <span class="ansi-yellow-bg">fig</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">canvas</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">print_figure</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">bytes_io</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kw</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    171</span> data <span style="color:rgb(98,98,98)">=</span> bytes_io<span style="color:rgb(98,98,98)">.</span>getvalue()
+<span class="ansi-green-fg">    172</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> fmt <span style="color:rgb(98,98,98)">==</span> <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">svg</span><span style="color:rgb(175,0,0)">'</span>:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\backend_bases.py:2175</span>, in <span class="ansi-cyan-fg">FigureCanvasBase.print_figure</span><span class="ansi-blue-fg ansi-bold">(self, filename, dpi, facecolor, edgecolor, orientation, format, bbox_inches, pad_inches, bbox_extra_artists, backend, **kwargs)</span>
+<span class="ansi-green-fg">   2172</span>     <span style="font-style:italic;color:rgb(95,135,135)"># we do this instead of `self.figure.draw_without_rendering`</span>
+<span class="ansi-green-fg">   2173</span>     <span style="font-style:italic;color:rgb(95,135,135)"># so that we can inject the orientation</span>
+<span class="ansi-green-fg">   2174</span>     <span style="font-weight:bold;color:rgb(0,135,0)">with</span> <span style="color:rgb(0,135,0)">getattr</span>(renderer, <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">_draw_disabled</span><span style="color:rgb(175,0,0)">"</span>, nullcontext)():
+<span class="ansi-green-fg ansi-bold">-&gt; 2175</span>         <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">figure</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2176</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> bbox_inches:
+<span class="ansi-green-fg">   2177</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> bbox_inches <span style="color:rgb(98,98,98)">==</span> <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">tight</span><span style="color:rgb(175,0,0)">"</span>:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\artist.py:95</span>, in <span class="ansi-cyan-fg">_finalize_rasterization.&lt;locals&gt;.draw_wrapper</span><span class="ansi-blue-fg ansi-bold">(artist, renderer, *args, **kwargs)</span>
+<span class="ansi-green-fg">     93</span> <span style="color:rgb(175,0,255)">@wraps</span>(draw)
+<span class="ansi-green-fg">     94</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span> <span style="color:rgb(0,0,255)">draw_wrapper</span>(artist, renderer, <span style="color:rgb(98,98,98)">*</span>args, <span style="color:rgb(98,98,98)">*</span><span style="color:rgb(98,98,98)">*</span>kwargs):
+<span class="ansi-green-fg ansi-bold">---&gt; 95</span>     result <span style="color:rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">artist</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     96</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> renderer<span style="color:rgb(98,98,98)">.</span>_rasterizing:
+<span class="ansi-green-fg">     97</span>         renderer<span style="color:rgb(98,98,98)">.</span>stop_rasterizing()
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\artist.py:72</span>, in <span class="ansi-cyan-fg">allow_rasterization.&lt;locals&gt;.draw_wrapper</span><span class="ansi-blue-fg ansi-bold">(artist, renderer)</span>
+<span class="ansi-green-fg">     69</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> artist<span style="color:rgb(98,98,98)">.</span>get_agg_filter() <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">     70</span>         renderer<span style="color:rgb(98,98,98)">.</span>start_filter()
+<span class="ansi-green-fg ansi-bold">---&gt; 72</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">artist</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     73</span> <span style="font-weight:bold;color:rgb(0,135,0)">finally</span>:
+<span class="ansi-green-fg">     74</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> artist<span style="color:rgb(98,98,98)">.</span>get_agg_filter() <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\figure.py:3162</span>, in <span class="ansi-cyan-fg">Figure.draw</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">   3159</span>             <span style="font-style:italic;color:rgb(95,135,135)"># ValueError can occur when resizing a window.</span>
+<span class="ansi-green-fg">   3161</span>     <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>patch<span style="color:rgb(98,98,98)">.</span>draw(renderer)
+<span class="ansi-green-fg ansi-bold">-&gt; 3162</span>     <span class="ansi-yellow-bg">mimage</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_draw_list_compositing_images</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   3163</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">artists</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">suppressComposite</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   3165</span>     renderer<span style="color:rgb(98,98,98)">.</span>close_group(<span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">figure</span><span style="color:rgb(175,0,0)">'</span>)
+<span class="ansi-green-fg">   3166</span> <span style="font-weight:bold;color:rgb(0,135,0)">finally</span>:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\image.py:132</span>, in <span class="ansi-cyan-fg">_draw_list_compositing_images</span><span class="ansi-blue-fg ansi-bold">(renderer, parent, artists, suppress_composite)</span>
+<span class="ansi-green-fg">    130</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> not_composite <span style="font-weight:bold;color:rgb(175,0,255)">or</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> has_images:
+<span class="ansi-green-fg">    131</span>     <span style="font-weight:bold;color:rgb(0,135,0)">for</span> a <span style="font-weight:bold;color:rgb(175,0,255)">in</span> artists:
+<span class="ansi-green-fg ansi-bold">--&gt; 132</span>         <span class="ansi-yellow-bg">a</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    133</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    134</span>     <span style="font-style:italic;color:rgb(95,135,135)"># Composite any adjacent images together</span>
+<span class="ansi-green-fg">    135</span>     image_group <span style="color:rgb(98,98,98)">=</span> []
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\artist.py:72</span>, in <span class="ansi-cyan-fg">allow_rasterization.&lt;locals&gt;.draw_wrapper</span><span class="ansi-blue-fg ansi-bold">(artist, renderer)</span>
+<span class="ansi-green-fg">     69</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> artist<span style="color:rgb(98,98,98)">.</span>get_agg_filter() <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">     70</span>         renderer<span style="color:rgb(98,98,98)">.</span>start_filter()
+<span class="ansi-green-fg ansi-bold">---&gt; 72</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">draw</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">artist</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">     73</span> <span style="font-weight:bold;color:rgb(0,135,0)">finally</span>:
+<span class="ansi-green-fg">     74</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> artist<span style="color:rgb(98,98,98)">.</span>get_agg_filter() <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axes\_base.py:3101</span>, in <span class="ansi-cyan-fg">_AxesBase.draw</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">   3098</span>     <span style="font-weight:bold;color:rgb(0,135,0)">for</span> spine <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>spines<span style="color:rgb(98,98,98)">.</span>values():
+<span class="ansi-green-fg">   3099</span>         artists<span style="color:rgb(98,98,98)">.</span>remove(spine)
+<span class="ansi-green-fg ansi-bold">-&gt; 3101</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_update_title_position</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   3103</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>axison:
+<span class="ansi-green-fg">   3104</span>     <span style="font-weight:bold;color:rgb(0,135,0)">for</span> _axis <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_axis_map<span style="color:rgb(98,98,98)">.</span>values():
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axes\_base.py:3045</span>, in <span class="ansi-cyan-fg">_AxesBase._update_title_position</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">   3043</span> top <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">max</span>(top, bb<span style="color:rgb(98,98,98)">.</span>ymax)
+<span class="ansi-green-fg">   3044</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> title<span style="color:rgb(98,98,98)">.</span>get_text():
+<span class="ansi-green-fg ansi-bold">-&gt; 3045</span>     <span class="ansi-yellow-bg">ax</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">yaxis</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_tightbbox</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>  <span style="font-style:italic;color:rgb(95,135,135)"># update offsetText</span>
+<span class="ansi-green-fg">   3046</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ax<span style="color:rgb(98,98,98)">.</span>yaxis<span style="color:rgb(98,98,98)">.</span>offsetText<span style="color:rgb(98,98,98)">.</span>get_text():
+<span class="ansi-green-fg">   3047</span>         bb <span style="color:rgb(98,98,98)">=</span> ax<span style="color:rgb(98,98,98)">.</span>yaxis<span style="color:rgb(98,98,98)">.</span>offsetText<span style="color:rgb(98,98,98)">.</span>get_tightbbox(renderer)
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axis.py:1372</span>, in <span class="ansi-cyan-fg">Axis.get_tightbbox</span><span class="ansi-blue-fg ansi-bold">(self, renderer, for_layout_only)</span>
+<span class="ansi-green-fg">   1369</span>     renderer <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>figure<span style="color:rgb(98,98,98)">.</span>_get_renderer()
+<span class="ansi-green-fg">   1370</span> ticks_to_draw <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_update_ticks()
+<span class="ansi-green-fg ansi-bold">-&gt; 1372</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_update_label_position</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1374</span> <span style="font-style:italic;color:rgb(95,135,135)"># go back to just this axis's tick labels</span>
+<span class="ansi-green-fg">   1375</span> tlb1, tlb2 <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_get_ticklabel_bboxes(ticks_to_draw, renderer)
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axis.py:2654</span>, in <span class="ansi-cyan-fg">YAxis._update_label_position</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">   2650</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span>
+<span class="ansi-green-fg">   2652</span> <span style="font-style:italic;color:rgb(95,135,135)"># get bounding boxes for this axis and any siblings</span>
+<span class="ansi-green-fg">   2653</span> <span style="font-style:italic;color:rgb(95,135,135)"># that have been set by `fig.align_ylabels()`</span>
+<span class="ansi-green-fg ansi-bold">-&gt; 2654</span> bboxes, bboxes2 <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_get_tick_boxes_siblings</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2655</span> x, y <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>label<span style="color:rgb(98,98,98)">.</span>get_position()
+<span class="ansi-green-fg">   2656</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>label_position <span style="color:rgb(98,98,98)">==</span> <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">left</span><span style="color:rgb(175,0,0)">'</span>:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axis.py:2206</span>, in <span class="ansi-cyan-fg">Axis._get_tick_boxes_siblings</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">   2204</span> axis <span style="color:rgb(98,98,98)">=</span> ax<span style="color:rgb(98,98,98)">.</span>_axis_map[name]
+<span class="ansi-green-fg">   2205</span> ticks_to_draw <span style="color:rgb(98,98,98)">=</span> axis<span style="color:rgb(98,98,98)">.</span>_update_ticks()
+<span class="ansi-green-fg ansi-bold">-&gt; 2206</span> tlb, tlb2 <span style="color:rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">axis</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_get_ticklabel_bboxes</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">ticks_to_draw</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2207</span> bboxes<span style="color:rgb(98,98,98)">.</span>extend(tlb)
+<span class="ansi-green-fg">   2208</span> bboxes2<span style="color:rgb(98,98,98)">.</span>extend(tlb2)
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\axis.py:1351</span>, in <span class="ansi-cyan-fg">Axis._get_ticklabel_bboxes</span><span class="ansi-blue-fg ansi-bold">(self, ticks, renderer)</span>
+<span class="ansi-green-fg">   1349</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> renderer <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">   1350</span>     renderer <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>figure<span style="color:rgb(98,98,98)">.</span>_get_renderer()
+<span class="ansi-green-fg ansi-bold">-&gt; 1351</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> ([<span class="ansi-yellow-bg">tick</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">label1</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_window_extent</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1352</span>          <span style="font-weight:bold;color:rgb(0,135,0)">for</span> tick <span style="font-weight:bold;color:rgb(175,0,255)">in</span> ticks <span style="font-weight:bold;color:rgb(0,135,0)">if</span> tick<span style="color:rgb(98,98,98)">.</span>label1<span style="color:rgb(98,98,98)">.</span>get_visible()],
+<span class="ansi-green-fg">   1353</span>         [tick<span style="color:rgb(98,98,98)">.</span>label2<span style="color:rgb(98,98,98)">.</span>get_window_extent(renderer)
+<span class="ansi-green-fg">   1354</span>          <span style="font-weight:bold;color:rgb(0,135,0)">for</span> tick <span style="font-weight:bold;color:rgb(175,0,255)">in</span> ticks <span style="font-weight:bold;color:rgb(0,135,0)">if</span> tick<span style="color:rgb(98,98,98)">.</span>label2<span style="color:rgb(98,98,98)">.</span>get_visible()])
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\text.py:959</span>, in <span class="ansi-cyan-fg">Text.get_window_extent</span><span class="ansi-blue-fg ansi-bold">(self, renderer, dpi)</span>
+<span class="ansi-green-fg">    954</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">RuntimeError</span>(
+<span class="ansi-green-fg">    955</span>         <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">Cannot get window extent of text w/o renderer. You likely </span><span style="color:rgb(175,0,0)">"</span>
+<span class="ansi-green-fg">    956</span>         <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">want to call </span><span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">figure.draw_without_rendering()</span><span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)"> first.</span><span style="color:rgb(175,0,0)">"</span>)
+<span class="ansi-green-fg">    958</span> <span style="font-weight:bold;color:rgb(0,135,0)">with</span> cbook<span style="color:rgb(98,98,98)">.</span>_setattr_cm(<span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>figure, dpi<span style="color:rgb(98,98,98)">=</span>dpi):
+<span class="ansi-green-fg ansi-bold">--&gt; 959</span>     bbox, info, descent <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_get_layout</span><span class="ansi-yellow-bg">(</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_renderer</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    960</span>     x, y <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>get_unitless_position()
+<span class="ansi-green-fg">    961</span>     x, y <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>get_transform()<span style="color:rgb(98,98,98)">.</span>transform((x, y))
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\text.py:373</span>, in <span class="ansi-cyan-fg">Text._get_layout</span><span class="ansi-blue-fg ansi-bold">(self, renderer)</span>
+<span class="ansi-green-fg">    370</span> ys <span style="color:rgb(98,98,98)">=</span> []
+<span class="ansi-green-fg">    372</span> <span style="font-style:italic;color:rgb(95,135,135)"># Full vertical extent of font, including ascenders and descenders:</span>
+<span class="ansi-green-fg ansi-bold">--&gt; 373</span> _, lp_h, lp_d <span style="color:rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_get_text_metrics_with_cache</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    374</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">lp</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_fontproperties</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    375</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">ismath</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">TeX</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">if</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_usetex</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">else</span><span class="ansi-yellow-bg"> </span><span style="font-weight:bold;color:rgb(0,135,0)" class="ansi-yellow-bg">False</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">dpi</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">figure</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">dpi</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    376</span> min_dy <span style="color:rgb(98,98,98)">=</span> (lp_h <span style="color:rgb(98,98,98)">-</span> lp_d) <span style="color:rgb(98,98,98)">*</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>_linespacing
+<span class="ansi-green-fg">    378</span> <span style="font-weight:bold;color:rgb(0,135,0)">for</span> i, line <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">enumerate</span>(lines):
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\text.py:69</span>, in <span class="ansi-cyan-fg">_get_text_metrics_with_cache</span><span class="ansi-blue-fg ansi-bold">(renderer, text, fontprop, ismath, dpi)</span>
+<span class="ansi-green-fg">     66</span> <span style="font-style:italic;color:rgb(175,0,0)">"""Call ``renderer.get_text_width_height_descent``, caching the results."""</span>
+<span class="ansi-green-fg">     67</span> <span style="font-style:italic;color:rgb(95,135,135)"># Cached based on a copy of fontprop so that later in-place mutations of</span>
+<span class="ansi-green-fg">     68</span> <span style="font-style:italic;color:rgb(95,135,135)"># the passed-in argument do not mess up the cache.</span>
+<span class="ansi-green-fg ansi-bold">---&gt; 69</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">_get_text_metrics_with_cache_impl</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">     70</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">weakref</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">ref</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">renderer</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">fontprop</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">copy</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ismath</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">dpi</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\text.py:77</span>, in <span class="ansi-cyan-fg">_get_text_metrics_with_cache_impl</span><span class="ansi-blue-fg ansi-bold">(renderer_ref, text, fontprop, ismath, dpi)</span>
+<span class="ansi-green-fg">     73</span> <span style="color:rgb(175,0,255)">@functools</span><span style="color:rgb(98,98,98)">.</span>lru_cache(<span style="color:rgb(98,98,98)">4096</span>)
+<span class="ansi-green-fg">     74</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span> <span style="color:rgb(0,0,255)">_get_text_metrics_with_cache_impl</span>(
+<span class="ansi-green-fg">     75</span>         renderer_ref, text, fontprop, ismath, dpi):
+<span class="ansi-green-fg">     76</span>     <span style="font-style:italic;color:rgb(95,135,135)"># dpi is unused, but participates in cache invalidation (via the renderer).</span>
+<span class="ansi-green-fg ansi-bold">---&gt; 77</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">renderer_ref</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_text_width_height_descent</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">fontprop</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ismath</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\backends\backend_agg.py:212</span>, in <span class="ansi-cyan-fg">RendererAgg.get_text_width_height_descent</span><span class="ansi-blue-fg ansi-bold">(self, s, prop, ismath)</span>
+<span class="ansi-green-fg">    210</span> _api<span style="color:rgb(98,98,98)">.</span>check_in_list([<span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">TeX</span><span style="color:rgb(175,0,0)">"</span>, <span style="font-weight:bold;color:rgb(0,135,0)">True</span>, <span style="font-weight:bold;color:rgb(0,135,0)">False</span>], ismath<span style="color:rgb(98,98,98)">=</span>ismath)
+<span class="ansi-green-fg">    211</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ismath <span style="color:rgb(98,98,98)">==</span> <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">TeX</span><span style="color:rgb(175,0,0)">"</span>:
+<span class="ansi-green-fg ansi-bold">--&gt; 212</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">super</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_text_width_height_descent</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">s</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">prop</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ismath</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    214</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ismath:
+<span class="ansi-green-fg">    215</span>     ox, oy, width, height, descent, font_image <span style="color:rgb(98,98,98)">=</span> \
+<span class="ansi-green-fg">    216</span>         <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>mathtext_parser<span style="color:rgb(98,98,98)">.</span>parse(s, <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>dpi, prop)
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\backend_bases.py:597</span>, in <span class="ansi-cyan-fg">RendererBase.get_text_width_height_descent</span><span class="ansi-blue-fg ansi-bold">(self, s, prop, ismath)</span>
+<span class="ansi-green-fg">    593</span> fontsize <span style="color:rgb(98,98,98)">=</span> prop<span style="color:rgb(98,98,98)">.</span>get_size_in_points()
+<span class="ansi-green-fg">    595</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ismath <span style="color:rgb(98,98,98)">==</span> <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">TeX</span><span style="color:rgb(175,0,0)">'</span>:
+<span class="ansi-green-fg">    596</span>     <span style="font-style:italic;color:rgb(95,135,135)"># todo: handle properties</span>
+<span class="ansi-green-fg ansi-bold">--&gt; 597</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_texmanager</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">get_text_width_height_descent</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    598</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">s</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">fontsize</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">renderer</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    600</span> dpi <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)">self</span><span style="color:rgb(98,98,98)">.</span>points_to_pixels(<span style="color:rgb(98,98,98)">72</span>)
+<span class="ansi-green-fg">    601</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> ismath:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\texmanager.py:363</span>, in <span class="ansi-cyan-fg">TexManager.get_text_width_height_descent</span><span class="ansi-blue-fg ansi-bold">(cls, tex, fontsize, renderer)</span>
+<span class="ansi-green-fg">    361</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> tex<span style="color:rgb(98,98,98)">.</span>strip() <span style="color:rgb(98,98,98)">==</span> <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">'</span>:
+<span class="ansi-green-fg">    362</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="color:rgb(98,98,98)">0</span>, <span style="color:rgb(98,98,98)">0</span>, <span style="color:rgb(98,98,98)">0</span>
+<span class="ansi-green-fg ansi-bold">--&gt; 363</span> dvifile <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">cls</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">make_dvi</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">tex</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">fontsize</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    364</span> dpi_fraction <span style="color:rgb(98,98,98)">=</span> renderer<span style="color:rgb(98,98,98)">.</span>points_to_pixels(<span style="color:rgb(98,98,98)">1.</span>) <span style="font-weight:bold;color:rgb(0,135,0)">if</span> renderer <span style="font-weight:bold;color:rgb(0,135,0)">else</span> <span style="color:rgb(98,98,98)">1</span>
+<span class="ansi-green-fg">    365</span> <span style="font-weight:bold;color:rgb(0,135,0)">with</span> dviread<span style="color:rgb(98,98,98)">.</span>Dvi(dvifile, <span style="color:rgb(98,98,98)">72</span> <span style="color:rgb(98,98,98)">*</span> dpi_fraction) <span style="font-weight:bold;color:rgb(0,135,0)">as</span> dvi:
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\texmanager.py:295</span>, in <span class="ansi-cyan-fg">TexManager.make_dvi</span><span class="ansi-blue-fg ansi-bold">(cls, tex, fontsize)</span>
+<span class="ansi-green-fg">    293</span>     <span style="font-weight:bold;color:rgb(0,135,0)">with</span> TemporaryDirectory(<span style="color:rgb(0,135,0)">dir</span><span style="color:rgb(98,98,98)">=</span>cwd) <span style="font-weight:bold;color:rgb(0,135,0)">as</span> tmpdir:
+<span class="ansi-green-fg">    294</span>         tmppath <span style="color:rgb(98,98,98)">=</span> Path(tmpdir)
+<span class="ansi-green-fg ansi-bold">--&gt; 295</span>         <span style="color:rgb(0,135,0)" class="ansi-yellow-bg">cls</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">_run_checked_subprocess</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    296</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">[</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">latex</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">-interaction=nonstopmode</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">--halt-on-error</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    297</span> <span class="ansi-yellow-bg">             </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">f</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">--output-directory=</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">{</span><span class="ansi-yellow-bg">tmppath</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">name</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">}</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    298</span> <span class="ansi-yellow-bg">             </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">f</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">{</span><span class="ansi-yellow-bg">texfile</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">name</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">}</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">tex</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">cwd</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">cwd</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    299</span>         (tmppath <span style="color:rgb(98,98,98)">/</span> Path(dvifile)<span style="color:rgb(98,98,98)">.</span>name)<span style="color:rgb(98,98,98)">.</span>replace(dvifile)
+<span class="ansi-green-fg">    300</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> dvifile
+
+File <span class="ansi-green-fg ansi-bold">c:\Users\eo\.pyenv\pyenv-win\versions\3.12.5\Lib\site-packages\matplotlib\texmanager.py:258</span>, in <span class="ansi-cyan-fg">TexManager._run_checked_subprocess</span><span class="ansi-blue-fg ansi-bold">(cls, command, tex, cwd)</span>
+<span class="ansi-green-fg">    254</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">RuntimeError</span>(
+<span class="ansi-green-fg">    255</span>         <span style="color:rgb(175,0,0)">f</span><span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">Failed to process string with tex because </span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>command[<span style="color:rgb(98,98,98)">0</span>]<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span style="color:rgb(175,0,0)"> </span><span style="color:rgb(175,0,0)">'</span>
+<span class="ansi-green-fg">    256</span>         <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">could not be found</span><span style="color:rgb(175,0,0)">'</span>) <span style="font-weight:bold;color:rgb(0,135,0)">from</span> <span style="font-weight:bold;color:rgb(0,0,255)">exc</span>
+<span class="ansi-green-fg">    257</span> <span style="font-weight:bold;color:rgb(0,135,0)">except</span> subprocess<span style="color:rgb(98,98,98)">.</span>CalledProcessError <span style="font-weight:bold;color:rgb(0,135,0)">as</span> exc:
+<span class="ansi-green-fg ansi-bold">--&gt; 258</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">RuntimeError</span>(
+<span class="ansi-green-fg">    259</span>         <span style="color:rgb(175,0,0)">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{prog}</span><span style="color:rgb(175,0,0)"> was not able to process the following string:</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="color:rgb(175,0,0)">'</span>
+<span class="ansi-green-fg">    260</span>         <span style="color:rgb(175,0,0)">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{tex!r}</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="color:rgb(175,0,0)">'</span>
+<span class="ansi-green-fg">    261</span>         <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">Here is the full command invocation and its output:</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="color:rgb(175,0,0)">'</span>
+<span class="ansi-green-fg">    262</span>         <span style="color:rgb(175,0,0)">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{format_command}</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="color:rgb(175,0,0)">'</span>
+<span class="ansi-green-fg">    263</span>         <span style="color:rgb(175,0,0)">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{exc}</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="font-weight:bold;color:rgb(175,95,0)">\n</span><span style="color:rgb(175,0,0)">'</span><span style="color:rgb(98,98,98)">.</span>format(
+<span class="ansi-green-fg">    264</span>             prog<span style="color:rgb(98,98,98)">=</span>command[<span style="color:rgb(98,98,98)">0</span>],
+<span class="ansi-green-fg">    265</span>             format_command<span style="color:rgb(98,98,98)">=</span>cbook<span style="color:rgb(98,98,98)">.</span>_pformat_subprocess(command),
+<span class="ansi-green-fg">    266</span>             tex<span style="color:rgb(98,98,98)">=</span>tex<span style="color:rgb(98,98,98)">.</span>encode(<span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">unicode_escape</span><span style="color:rgb(175,0,0)">'</span>),
+<span class="ansi-green-fg">    267</span>             exc<span style="color:rgb(98,98,98)">=</span>exc<span style="color:rgb(98,98,98)">.</span>output<span style="color:rgb(98,98,98)">.</span>decode(<span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">utf-8</span><span style="color:rgb(175,0,0)">'</span>, <span style="color:rgb(175,0,0)">'</span><span style="color:rgb(175,0,0)">backslashreplace</span><span style="color:rgb(175,0,0)">'</span>))
+<span class="ansi-green-fg">    268</span>         ) <span style="font-weight:bold;color:rgb(0,135,0)">from</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">    269</span> _log<span style="color:rgb(98,98,98)">.</span>debug(report)
+<span class="ansi-green-fg">    270</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> report
+
+<span class="ansi-red-fg ansi-bold">RuntimeError</span>: latex was not able to process the following string:
+b'lp'
+
+Here is the full command invocation and its output:
+
+latex -interaction=nonstopmode --halt-on-error --output-directory=tmpsw2hjri_ 03c6366f7a4e307ef0b23ee8720251c2.tex
+
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1 Portable) (preloaded format=latex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(03c6366f7a4e307ef0b23ee8720251c2.tex
+LaTeX2e &lt;2023-11-01&gt; patch level 1
+L3 programming layer &lt;2024-01-04&gt;
+
+(C:\ProgramData\scoop\apps\latex\current\texmfs\install\tex/latex/base\article.
+cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+
+(C:\ProgramData\scoop\apps\latex\current\texmfs\install\tex/latex/base\size10.c
+lo))
+
+! LaTeX Error: File `type1cm.sty' not found.
+
+Type X to quit or &lt;RETURN&gt; to proceed,
+or enter new name. (Default extension: sty)
+
+Enter file name: 
+! Emergency stop.
+&lt;read *&gt; 
+         
+l.8 \usepackage
+               {type1ec}^^M
+No pages of output.
+Transcript written on C:\Users\eo\.matplotlib\tex.cache\03\c6\tmpsw2hjri_\03c63
+66f7a4e307ef0b23ee8720251c2.log.
+latex: major issue: So far, you have not checked for MiKTeX updates.
+
+
+</pre>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 2960x560 with 6 Axes&gt;</code></pre>
+</div>
+</div>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
