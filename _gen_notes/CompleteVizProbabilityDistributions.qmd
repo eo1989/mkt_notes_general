@@ -5,7 +5,7 @@ execute:
   eval: true
   echo: true
   fenced: true
-jupyter: win_pyenv3.11.1
+jupyter: py3125_base
 ---
 Table of Contents
 ----------
