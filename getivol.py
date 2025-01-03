@@ -2,15 +2,15 @@
 # ---
 # title: "iv term structure"
 # format: html
-# jupyter: Win Pyenv3.11.1
+# jupyter: uvpy3125_mktnotesgen
 # ---
 
 # %%
-import yfinance as yf
+import yfinance as yf  # noqa: I001
 import time  # noqa: F401
 import pandas as pd
-from datetime import date
-from yahoo_fin import options
+from datetime import date, datetime
+from yahoo_fin import options  # type: ignore
 import numpy as np
 import math
 
@@ -24,8 +24,10 @@ filterwarnings("ignore")
 # %%
 
 symbol = "AMD"
-RFR = math.e ** (0.0525) - 1
+RFR = math.e ** (0.0425) - 1
 TODAY = date(2024, 2, 23)
+# TODAY = datetime.now(tz=datetime.timezone.utc).date()
+print(TODAY)
 
 ticker_yahoo = yf.Ticker(symbol)
 data = ticker_yahoo.history()
@@ -57,7 +59,7 @@ def _get_iv(chain):
     if iv is None:
         # return [float(iv.strip("%")) / 100 if iv is not None else None]
         return iv
-    elif iv is str:
+    if isinstance(iv, str):
         return iv.strip("%") / 100
 
 
@@ -121,7 +123,7 @@ def get_data(con_type):
 
     for date_expire_str in options.get_expiration_dates(symbol):
         chain = options.get_options_chain(symbol, date_expire_str)[con_type]
-        _exp_date = datetime.strptime(date_expire_str, "%B %d, %Y").date()
+        _exp_date = datetime.strptime(date_expire_str, "%B %d, %Y").date()  # noqa: DTZ007
         ttm = (date(_exp_date.year, _exp_date.month, _exp_date.day) - date_today).days
 
         chains[ttm] = chain
