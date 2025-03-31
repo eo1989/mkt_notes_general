@@ -1,0 +1,121 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Bayes Penguins\"\n",
+        "format:\n",
+        "  html:\n",
+        "    code-fold: true\n",
+        "    mermaid:\n",
+        "      theme: forest\n",
+        "jupyter:\n",
+        "  kernelspec:\n",
+        "    display_name: gen\n",
+        "    language: python\n",
+        "    name: gen\n",
+        "execute:\n",
+        "  cache: refresh\n",
+        "  warning: false\n",
+        "code-line-numbers: true\n",
+        "code-block-border-left: true\n",
+        "fig-align: center\n",
+        "---\n",
+        "\n",
+        "# Bayes Penguins from Bayesian Modeling & Computation in Python (CRC)"
+      ],
+      "id": "b95090cc"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pymc as mc\n",
+        "import pandas as pd\n",
+        "import polars as pl\n",
+        "import matplotlib.pyplot as plt\n",
+        "import xarray as xr\n",
+        "import numpy as np\n",
+        "import arviz as av"
+      ],
+      "id": "e30438a7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The data will be 3 species of pengions."
+      ],
+      "id": "71e8ae78"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "av.style.use(\"arviz-grayscale\")\n",
+        "plt.rcParams[\"figure.dpi\"] = 300\n",
+        "\n",
+        "# pengs = pl.read_csv(\"./data/penguins.csv\")\n",
+        "# missing_pengs = pengs.select()\n",
+        "\n",
+        "pengs = pd.read_csv(\"./data/penguins.csv\")\n",
+        "\n",
+        "missing_pengs = pengs.isnull()[\n",
+        "    [\"bill_length_mm\", \"flipper_length_mm\", \"sex\", \"body_mass_g\"]\n",
+        "].any(axis = 1)\n",
+        "penguins = pengs.loc[~missing_pengs]\n",
+        "pengs"
+      ],
+      "id": "1c248371",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Calculate the empirical mean of the mass `body_mass_g`."
+      ],
+      "id": "6d5fcc45"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "summary_stats = (\n",
+        "    penguins.loc[:, [\"species\", \"body_mass_g\"]]\n",
+        "    .groupby(\"species\")\n",
+        "    .agg([\"mean\", \"std\", \"count\"])\n",
+        ")\n",
+        "summary_stats"
+      ],
+      "id": "a17b8712",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The point estimates for both the mean and teh dispersion, but we dont know the uncertainty of these statistics. The get the estimates of uncertainty is by using Bayesian methods. To begin, often `conjecture` is needed for a relationship of observations to parameters, for example:\n",
+        "$$\n",
+        "\\overbrace{P(\\mu,\\sigma \\mid Y)}^{\\textit{Posterior}} ∝ \\overbrace{\\mathcal{N}(Y \\mid \\mu, \\sigma)}^{\\textit{Likelihood}} \\hspace0.5em \\overbrace{\\underbrace{\\mathcal{N}(4000, 3000)}_{\\mu}\\underbrace{\\mathcal{HT}(100, 2000)}_{\\sigma}}^\\textit{Prior}\n",
+        "$$\n"
+      ],
+      "id": "9d15291c"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "gen",
+      "language": "python",
+      "name": "gen"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

@@ -1,0 +1,69 @@
+---
+title: "Bayes Penguins"
+format:
+  html:
+    code-fold: true
+    mermaid:
+      theme: forest
+jupyter: gen
+# jupyter:
+#   kernelspec:
+#     display_name: gen
+#     language: python
+#     name: gen
+execute:
+  cache: refresh
+  warning: false
+echo: false
+code-line-numbers: true
+code-block-border-left: true
+fig-align: center
+---
+
+# Bayes Penguins from Bayesian Modeling & Computation in Python (CRC)
+
+```{python}
+import pymc as mc
+import pandas as pd
+import polars as pl
+import matplotlib.pyplot as plt
+import xarray as xr
+import numpy as np
+import arviz as av
+```
+
+The data will be 3 species of pengions.
+
+```{python}
+av.style.use("arviz-grayscale")
+plt.rcParams["figure.dpi"] = 300
+
+# pengs = pl.read_csv("./data/penguins.csv")
+# missing_pengs = pengs.select()
+
+pengs = pd.read_csv("./data/penguins.csv")
+
+missing_pengs = pengs.isnull()[
+    ["bill_length_mm", "flipper_length_mm", "sex", "body_mass_g"]
+].any(axis = 1)
+penguins = pengs.loc[~missing_pengs]
+pengs
+```
+
+Calculate the empirical mean of the mass `body_mass_g`.
+
+```{python}
+summary_stats = (
+    penguins.loc[:, ["species", "body_mass_g"]]
+    .groupby("species")
+    .agg(["mean", "std", "count"])
+)
+summary_stats
+```
+
+The point estimates for both the mean and teh dispersion, but we dont know the uncertainty of these statistics. The get the estimates of uncertainty is by using Bayesian methods. To begin, often `conjecture` is needed for a relationship of observations to parameters, for example:
+$$
+\overbrace{P(\mu,\sigma \mid Y)}^{\textit{Posterior}} ∝ \overbrace{\mathcal{N}(Y \mid \mu, \sigma)}^{\textit{Likelihood}} \hspace0.5em \overbrace{\underbrace{\mathcal{N}(4000, 3000)}_{\mu}\underbrace{\mathcal{HT}(100, 2000)}_{\sigma}}^\textit{Prior}
+$$
+
+

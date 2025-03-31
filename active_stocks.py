@@ -29,7 +29,7 @@ for th in table.find_all("th"):
 data = []
 rows = table.find_all("tr")[1:26] # top 25
 
-for rows in rows:
+for row in rows:
 	cols = row.find_all("td")
 	cols = [ele.text.strip() for ele in cols]
 	data.append(cols)
